@@ -1,0 +1,316 @@
+🌱 CHAPTER 1: THE CELL — STRUCTURE & FUNCTIONS
+1.1 What is a Cell?
+
+A cell is the smallest structural and functional unit of life.
+All living organisms are made of cells.
+
+Types of organisms based on cell number:
+
+Unicellular → Single cell (Amoeba, Paramecium)
+
+Multicellular → Many cells (Humans, Plants)
+
+1.2 Cell Theory
+
+Proposed by Schleiden & Schwann
+Later expanded by Virchow
+
+Cell Theory States:
+
+All living organisms are made of cells.
+
+The cell is the structural and functional unit of life.
+
+All cells arise from pre-existing cells.
+
+1.3 Prokaryotic vs Eukaryotic Cells
+
+Prokaryotic:
+
+No nucleus
+
+Example: Bacteria
+
+No membrane-bound organelles
+
+Eukaryotic:
+
+True nucleus present
+
+Example: Humans, Plants
+
+Complex organelles present
+
+1.4 Cell Organelles & Functions
+
+Nucleus
+
+Control center of the cell
+
+Contains DNA
+
+Mitochondria
+
+Powerhouse of the cell
+
+Produces energy
+
+Releases ATP
+Formula:
+ATP Production = Glucose + O2 -> CO2 + H2O + Energy
+
+Ribosomes
+
+Protein synthesis
+
+Golgi Apparatus
+
+Packaging and transport
+
+Lysosomes
+
+Digestive enzymes
+
+"Suicidal bags"
+
+Endoplasmic Reticulum (ER):
+
+Rough ER = Protein synthesis
+
+Smooth ER = Lipid synthesis
+
+Chloroplast (plants only):
+
+Photosynthesis
+Formula:
+6CO2 + 6H2O -> C6H12O6 + 6O2
+
+Vacuoles
+
+Storage
+
+🌿 CHAPTER 2: TISSUES
+2.1 What are Tissues?
+
+A group of similar cells performing a common function.
+
+2.2 Plant Tissues
+
+1. Meristematic Tissue (Growth)
+
+Types:
+
+Apical Meristem → Length
+
+Lateral Meristem → Thickness
+
+Intercalary → Internode growth
+
+2. Permanent Tissues
+
+Parenchyma (Support & Storage)
+
+Collenchyma (Flexibility)
+
+Sclerenchyma (Hardness)
+
+Conducting Tissues:
+
+Xylem → Water transport
+
+Phloem → Food transport
+
+2.3 Animal Tissues
+
+1. Epithelial Tissue
+
+Covers body surfaces
+
+Example: Skin lining
+
+2. Connective Tissue
+
+Bone
+
+Blood
+
+Tendons
+
+Cartilage
+
+3. Muscle Tissue
+
+Skeletal (voluntary)
+
+Smooth (involuntary)
+
+Cardiac (involuntary)
+
+4. Nervous Tissue
+
+Made of neurons
+
+Transfers information
+
+🌾 CHAPTER 3: NUTRITION
+3.1 Nutrition in Plants
+
+Plants make their own food → Autotrophic nutrition
+
+Photosynthesis Formula:
+6CO2 + 6H2O + Sunlight -> C6H12O6 + 6O2
+
+Requirements:
+
+Chlorophyll
+
+Sunlight
+
+CO2
+
+Water
+
+3.2 Nutrition in Humans
+
+Steps:
+
+Ingestion
+
+Digestion
+
+Absorption
+
+Assimilation
+
+Egestion
+
+Major Digestive Organs:
+
+Mouth
+
+Stomach
+
+Small Intestine
+
+Liver (makes bile)
+
+Pancreas (makes enzymes)
+
+Large Intestine
+
+Enzyme Summary:
+
+Amylase -> Breaks starch into maltose
+Protease -> Breaks proteins into amino acids
+Lipase -> Breaks fats into fatty acids + glycerol
+
+🌬️ CHAPTER 4: HUMAN RESPIRATORY SYSTEM
+4.1 What is Respiration?
+
+Process of releasing energy from food.
+
+Two types:
+
+Aerobic Respiration: Uses oxygen
+
+Anaerobic Respiration: No oxygen (muscle cramps caused by lactic acid)
+
+4.2 Parts of Respiratory System
+
+Nose
+
+Pharynx
+
+Larynx
+
+Trachea
+
+Bronchi
+
+Bronchioles
+
+Alveoli (site of gas exchange)
+
+4.3 Breathing Process
+
+Inhalation:
+
+Diaphragm moves down
+
+Chest expands
+
+Air enters lungs
+
+Exhalation:
+
+Diaphragm moves up
+
+Chest contracts
+
+Air leaves lungs
+
+4.4 Respiration Formula
+Glucose + O2 -> CO2 + H2O + Energy
+
+❤️ CHAPTER 5: HUMAN CIRCULATORY SYSTEM
+5.1 What is Circulation?
+
+Transport of nutrients, gases, and wastes in the body.
+
+5.2 Components of the Circulatory System
+
+Heart
+
+Blood
+
+Blood vessels
+
+5.3 Structure of Heart
+
+Four chambers:
+
+Right Atrium
+
+Right Ventricle
+
+Left Atrium
+
+Left Ventricle
+
+Valves → prevent backflow
+
+5.4 Types of Blood Vessels
+
+Arteries:
+
+Carry blood away from heart
+
+Thick walls
+
+Veins:
+
+Carry blood towards heart
+
+Thin walls
+
+Have valves
+
+Capillaries:
+
+One cell thick
+
+Exchange of gases
+
+5.5 Blood Composition
+RBC -> Carries oxygen (contains hemoglobin)
+WBC -> Fights infection
+Platelets -> Helps in clotting
+Plasma -> Fluid part
+
+5.6 Double Circulation
+
+Blood goes through the heart twice for every complete cycle:
+
+Pulmonary circulation
+
+Systemic circulation

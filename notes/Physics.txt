@@ -1,0 +1,222 @@
+
+# **CHAPTER 1: MOTION**
+
+## **1.1 Introduction**
+
+Motion refers to the change in position of an object with time. When an object moves from one place to another, it is said to be in motion.
+
+## **1.2 Distance and Displacement**
+
+* **Distance:** Total length of the path travelled. *Scalar quantity.*
+* **Displacement:** Shortest straight-line distance between initial and final position. *Vector quantity.*
+
+### **Formulas**
+
+```
+Speed = Distance / Time
+Velocity = Displacement / Time
+Acceleration = (Final Velocity - Initial Velocity) / Time
+```
+
+## **1.3 Types of Motion**
+
+* **Uniform Motion:** Constant speed.
+* **Non-uniform Motion:** Speed changes.
+* **Uniformly Accelerated Motion:** Constant acceleration (e.g., free fall).
+
+## **1.4 Equations of Motion (for constant acceleration)**
+
+```
+v = u + a*t
+s = u*t + 0.5*a*t*t
+v*v = u*u + 2*a*s
+```
+
+Where:
+
+* u = initial velocity
+* v = final velocity
+* a = acceleration
+* s = displacement
+* t = time
+
+## **1.5 Graphs of Motion**
+
+* Distance-Time: straight line → uniform speed
+* Velocity-Time: slope gives acceleration
+* Area under v-t graph = displacement
+
+---
+
+# **CHAPTER 2: FORCE & NEWTON'S LAWS**
+
+## **2.1 Force**
+
+A push or pull that changes the state of motion of an object.
+
+### **Formula**
+
+```
+Force = Mass * Acceleration
+F = m * a
+```
+
+## **2.2 Newton's Three Laws**
+
+### **First Law (Law of Inertia)**
+
+A body remains at rest or moves in a straight line unless acted upon by an external force.
+
+### **Second Law**
+
+Rate of change of momentum is directly proportional to force.
+
+Momentum:
+
+```
+Momentum (p) = m * v
+```
+
+### **Third Law**
+
+For every action, there is an equal and opposite reaction.
+
+## **2.3 Friction**
+
+Force that opposes motion.
+
+Types:
+
+* Static friction
+* Kinetic friction
+* Rolling friction
+
+---
+
+# **CHAPTER 3: WORK, ENERGY & POWER**
+
+## **3.1 Work**
+
+Work is done when a force moves an object in the direction of force.
+
+### **Formula**
+
+```
+Work = Force * Displacement
+W = F * s
+```
+
+## **3.2 Energy**
+
+Capacity to do work.
+
+### **Types**
+
+* Kinetic Energy (motion)
+* Potential Energy (position)
+
+### **Formulas**
+
+```
+Kinetic Energy (KE) = 0.5 * m * v * v
+Potential Energy (PE) = m * g * h
+```
+
+## **3.3 Power**
+
+Rate of doing work.
+
+```
+Power = Work / Time
+P = W / t
+```
+
+Unit: Watt (W)
+
+---
+
+# **CHAPTER 4: GRAVITATION**
+
+## **4.1 Universal Law of Gravitation**
+
+Every object attracts every other object with a force.
+
+### **Formula**
+
+```
+F = G * m1 * m2 / (r * r)
+```
+
+Where:
+
+* G = 6.67 * 10^-11
+* m1, m2 = masses
+* r = distance between them
+
+## **4.2 Acceleration due to Gravity**
+
+Earth pulls objects with acceleration **g**.
+
+```
+g = 9.8 m/s^2
+Weight W = m * g
+```
+
+## **4.3 Free Fall**
+
+Object falling under gravity alone.
+
+Equations of motion apply with `a = g`.
+
+---
+
+# **CHAPTER 5: LIGHT (REFLECTION & REFRACTION)**
+
+## **5.1 Reflection of Light**
+
+Bouncing of light from a surface.
+
+### **Laws of Reflection**
+
+1. Angle of incidence = angle of reflection
+2. Incident ray, reflected ray & normal lie on same plane
+
+## **5.2 Mirror Formula**
+
+For spherical mirrors:
+
+```
+1/f = 1/v + 1/u
+```
+
+magnification:
+
+```
+m = -v/u
+```
+
+## **5.3 Refraction**
+
+Bending of light when passing from one medium to another.
+
+### **Snell's Law**
+
+```
+n1 * sin(i) = n2 * sin(r)
+```
+
+Refractive index:
+
+```
+n = Speed of light in vacuum / Speed of light in medium
+```
+
+## **5.4 Lens Formula**
+
+```
+1/f = 1/v - 1/u
+```
+
+Magnification:
+
+m = v/u

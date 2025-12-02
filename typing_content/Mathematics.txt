@@ -1,0 +1,4 @@
+Mathematics is the language of science and engineering.
+Algebra uses symbols to represent numbers in equations.
+Geometry studies shapes sizes and properties of space.
+Calculus deals with rates of change and accumulation.

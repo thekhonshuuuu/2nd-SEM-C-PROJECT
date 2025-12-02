@@ -1,0 +1,316 @@
+CHAPTER 1: Atoms, Molecules & Chemical Reactions
+1.1 What is Chemistry?
+
+Chemistry is the branch of science that studies:
+
+Matter
+
+Its composition
+
+Its properties
+
+How substances interact, combine, or change during reactions
+
+Everything around us—air, water, food, metals—is made of atoms and molecules.
+
+1.2 Atoms
+
+The smallest unit of matter that cannot be broken chemically.
+
+Each element consists of a unique type of atom.
+
+Parts of Atom:
+
+Proton (positive charge)
+
+Neutron (no charge)
+
+Electron (negative charge)
+
+Atomic Number (Z):
+Z = number of protons
+
+Mass Number (A):
+A = protons + neutrons
+
+1.3 Molecules
+
+Two or more atoms chemically bonded together.
+
+Examples:
+
+H2 = molecule of Hydrogen
+
+O2 = molecule of Oxygen
+
+H2O = molecule of Water
+
+1.4 Ions
+
+Charged atoms or molecules.
+
+Cation = positively charged
+
+Anion = negatively charged
+
+Example:
+Na+ , Cl- , Ca2+ , O2-
+
+1.5 Chemical Formula
+
+Shows the symbols of elements and number of atoms.
+
+Examples:
+
+Water: H2O
+
+Carbon dioxide: CO2
+
+Sodium chloride: NaCl
+
+1.6 Chemical Reactions
+
+A chemical reaction transforms reactants into products.
+
+General Form:
+Reactants --> Products
+
+Example:
+2H2 + O2 --> 2H2O
+
+1.7 Balancing Chemical Equations
+
+Law of Conservation of Mass:
+Mass before reaction = Mass after reaction
+
+So, number of atoms on both sides must be equal.
+
+Formulas (Plain Text Format)
+
+Mass Number (A) = Protons + Neutrons
+Atomic Number (Z) = Protons
+Number of Neutrons = A - Z
+
+Molecular Mass = sum of atomic masses of atoms
+Number of Moles = Mass / Molar Mass
+Mass = Moles * Molar Mass
+Avogadro Number = 6.022 * 10^23
+
+CHAPTER 2: Structure of Atom
+2.1 Discovery of Sub-Atomic Particles
+
+Electron:
+Discovered by J.J. Thomson using cathode ray tube.
+
+Proton:
+Discovered by Rutherford.
+
+Neutron:
+Discovered by James Chadwick.
+
+2.2 Atomic Models
+Thomson's Model
+
+Plum pudding model
+
+Electrons scattered inside positive sphere
+
+Rutherford's Model
+
+Gold foil experiment
+
+Nucleus at center
+
+Mostly empty space
+
+Bohr’s Model (Important)
+
+Electrons revolve around nucleus in fixed orbits called “shells”.
+
+Shells:
+K, L, M, N ... OR n = 1, 2, 3, 4
+
+Maximum electrons:
+2 * n^2
+
+Example:
+K shell (n=1) --> 2 electrons
+L shell (n=2) --> 8 electrons
+
+2.3 Electronic Configuration
+
+Shows arrangement of electrons.
+
+Examples:
+
+Hydrogen = 1
+
+Carbon = 2,4
+
+Oxygen = 2,6
+
+Sodium = 2,8,1
+
+2.4 Valency
+
+Valency = combining capacity of an element.
+
+Examples:
+
+Na = 1
+
+Cl = 1
+
+O = 2
+
+N = 3
+
+Formulas (Plain Text Format)
+
+Max electrons in orbit = 2 * n^2
+Valence Electrons = electrons in outermost shell
+Charge on Ion = Protons - Electrons
+
+CHAPTER 3: Chemical Bonding
+3.1 Why Do Atoms Bond?
+
+Atoms bond to become stable by achieving octet (8 electrons in outer shell).
+
+3.2 Types of Chemical Bonds
+1. Ionic Bond
+
+Transfer of electrons
+
+Formed between metal + non-metal
+
+Example:
+Na (2,8,1) gives 1 electron to Cl (2,8,7)
+
+Formation:
+Na --> Na+
+Cl --> Cl-
+
+Ionic compound: NaCl
+
+2. Covalent Bond
+
+Sharing of electrons
+
+Formed between two non-metals
+
+Examples:
+
+H2
+
+O2
+
+CO2
+
+H2O
+
+3. Metallic Bond
+
+Free moving electrons (electron sea model)
+
+Found in metals
+
+3.3 Properties
+Ionic	Covalent
+High melting point	Low melting point
+Conducts when molten	Poor conductor
+Usually solid	solid/liquid/gas
+Formulas (Plain Text Format)
+
+Octet = 8 electrons in valence shell
+Ionic Bond = Metal donates electron + Nonmetal accepts
+Covalent Bond = Sharing of electrons
+
+CHAPTER 4: States of Matter & Gas Laws
+4.1 Three States
+
+Solid (strong forces)
+
+Liquid (medium forces)
+
+Gas (weak forces)
+
+4.2 Gas Laws
+Boyle’s Law
+
+Pressure * Volume = Constant
+P1 * V1 = P2 * V2
+
+Charles’ Law
+
+V / T = Constant
+V1 / T1 = V2 / T2
+
+Gay-Lussac’s Law
+
+P / T = Constant
+P1 / T1 = P2 / T2
+
+Ideal Gas Law
+
+P * V = n * R * T
+
+Formulas (Plain Text Format)
+
+Boyle: P1 * V1 = P2 * V2
+Charles: V1 / T1 = V2 / T2
+Gay Lussac: P1 / T1 = P2 / T2
+Ideal Gas: P * V = n * R * T
+
+CHAPTER 5: Acids, Bases & Salts
+5.1 Definitions
+
+Acid:
+Releases H+ ions in water
+Example: HCl, H2SO4
+
+Base:
+Releases OH- ions
+Example: NaOH, KOH
+
+Salt:
+Formed by acid + base reaction
+Example: NaCl, CaSO4
+
+5.2 pH Scale
+
+Measures acidity and basicity.
+
+Range:
+0 to 14
+
+pH < 7 --> Acid
+
+pH = 7 --> Neutral
+
+pH > 7 --> Base
+
+5.3 Neutralization Reaction
+
+Acid + Base --> Salt + Water
+
+Example:
+HCl + NaOH --> NaCl + H2O
+
+5.4 Important Acids & Bases
+
+HCl (Hydrochloric acid)
+
+HNO3 (Nitric acid)
+
+H2SO4 (Sulfuric acid)
+
+NaOH (Sodium hydroxide)
+
+Ca(OH)2 (Calcium hydroxide)
+
+Formulas (Plain Text Format)
+
+pH = -log10(H+)
+Acid + Base = Salt + Water
+Example: HCl + NaOH = NaCl + H2O
+Molarity = Moles / Volume(L)

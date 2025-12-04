@@ -1,6 +1,3 @@
-// eduquest_final_complete_corrected.cpp
-// Complete Edutainment System with Enhanced Typing Test - CORRECTED VERSION
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -16,7 +13,6 @@
 
 using namespace std;
 
-// ========== COLOR CONSTANTS ==========
 const int COLOR_RESET = 7;
 const int COLOR_RED = 12;
 const int COLOR_GREEN = 10;
@@ -26,11 +22,9 @@ const int COLOR_PURPLE = 13;
 const int COLOR_CYAN = 11;
 const int COLOR_WHITE = 15;
 
-// Forward declarations
 class User;
 class Utility;
 
-// ========== UTILITY CLASS ==========
 class Utility {
 private:
     static HANDLE hConsole;
@@ -85,17 +79,6 @@ public:
             }
         }
         return password;
-    }
-    
-    static void openInBrowser(const string& filename) {
-        if (fileExists(filename)) {
-            string command = "start \"\" \"" + filename + "\"";
-            system(command.c_str());
-        } else {
-            setColor(COLOR_RED);
-            cout << "\nError: File '" << filename << "' not found!\n";
-            setColor(COLOR_RESET);
-        }
     }
     
     static bool fileExists(const string& filename) {
@@ -162,18 +145,10 @@ public:
         transform(result.begin(), result.end(), result.begin(), ::tolower);
         return result;
     }
-    
-    static void displayExitHint() {
-        cout << "\n";
-        setColor(COLOR_YELLOW);
-        cout << "Press ESC or Q to go back\n";
-        setColor(COLOR_RESET);
-    }
 };
 
 HANDLE Utility::hConsole;
 
-// ========== USER CLASS ==========
 class User {
 private:
     string username;
@@ -219,7 +194,6 @@ public:
     }
 };
 
-// ========== USER MANAGER CLASS ==========
 class UserManager {
 private:
     vector<User> users;
@@ -293,7 +267,6 @@ public:
     
     void displayAllUsers() {
         Utility::printHeader("REGISTERED USERS");
-        
         int count = 1;
         for (const auto& user : users) {
             cout << count++ << ". " << user.getUsername() 
@@ -350,7 +323,6 @@ private:
     }
 };
 
-// ========== NOTES MANAGER CLASS ==========
 class NotesManager {
 private:
     const string NOTES_DIR = "notes/";
@@ -369,25 +341,19 @@ public:
     void viewNotes() {
         while (true) {
             Utility::printHeader("STUDY NOTES");
-            
             for (size_t i = 0; i < subjects.size(); i++) {
                 cout << i + 1 << ". " << subjects[i] << "\n";
             }
             cout << subjects.size() + 1 << ". Back\n";
-            
             cout << "\nSelect subject: ";
             string input;
             getline(cin, input);
             
-            if (Utility::checkExit() || input.empty()) {
-                return;
-            }
+            if (Utility::checkExit() || input.empty()) return;
             
             try {
                 int choice = stoi(input);
-                if (choice == subjects.size() + 1) {
-                    return;
-                }
+                if (choice == subjects.size() + 1) return;
                 if (choice >= 1 && choice <= subjects.size()) {
                     displayNote(subjects[choice - 1]);
                 }
@@ -400,7 +366,6 @@ public:
     
     void displayNote(const string& subject) {
         string filename = NOTES_DIR + subject + ".txt";
-        
         ifstream file(filename);
         if (!file.is_open()) {
             Utility::printError("No notes found!");
@@ -409,13 +374,11 @@ public:
         }
         
         Utility::printHeader(subject + " NOTES");
-        
         string line;
         int lineCount = 0;
         while (getline(file, line)) {
             cout << line << "\n";
             lineCount++;
-            
             if (lineCount % 20 == 0) {
                 cout << "\n--- Press Enter to continue --- ";
                 if (Utility::checkExit()) {
@@ -426,26 +389,21 @@ public:
             }
         }
         file.close();
-        
         Utility::pauseScreen();
     }
     
     void uploadNote() {
         Utility::printHeader("UPLOAD NOTES");
-        
         cout << "Select subject:\n";
         for (size_t i = 0; i < subjects.size(); i++) {
             cout << i + 1 << ". " << subjects[i] << "\n";
         }
         cout << subjects.size() + 1 << ". New Subject\n";
-        
         cout << "\nChoice: ";
         string input;
         getline(cin, input);
         
-        if (Utility::checkExit() || input.empty()) {
-            return;
-        }
+        if (Utility::checkExit() || input.empty()) return;
         
         try {
             int choice = stoi(input);
@@ -455,7 +413,6 @@ public:
                 cout << "Enter new subject: ";
                 getline(cin, subject);
                 subject = Utility::trim(subject);
-                
                 if (subject.empty()) {
                     Utility::printError("Invalid subject!");
                     Utility::pauseScreen();
@@ -488,9 +445,7 @@ public:
             } else {
                 Utility::printError("Failed to upload!");
             }
-            
             Utility::pauseScreen();
-            
         } catch (...) {
             Utility::printError("Invalid input!");
             Utility::pauseScreen();
@@ -499,19 +454,15 @@ public:
     
     void updateNote() {
         Utility::printHeader("UPDATE NOTES");
-        
         cout << "Select subject:\n";
         for (size_t i = 0; i < subjects.size(); i++) {
             cout << i + 1 << ". " << subjects[i] << "\n";
         }
-        
         cout << "\nChoice: ";
         string input;
         getline(cin, input);
         
-        if (Utility::checkExit() || input.empty()) {
-            return;
-        }
+        if (Utility::checkExit() || input.empty()) return;
         
         try {
             int choice = stoi(input);
@@ -535,7 +486,6 @@ public:
                 } else {
                     Utility::printError("Failed to update!");
                 }
-                
                 Utility::pauseScreen();
             }
         } catch (...) {
@@ -546,19 +496,15 @@ public:
     
     void deleteNote() {
         Utility::printHeader("DELETE NOTES");
-        
         cout << "Select subject:\n";
         for (size_t i = 0; i < subjects.size(); i++) {
             cout << i + 1 << ". " << subjects[i] << "\n";
         }
-        
         cout << "\nChoice: ";
         string input;
         getline(cin, input);
         
-        if (Utility::checkExit() || input.empty()) {
-            return;
-        }
+        if (Utility::checkExit() || input.empty()) return;
         
         try {
             int choice = stoi(input);
@@ -578,7 +524,6 @@ public:
                         Utility::printError("Failed to delete!");
                     }
                 }
-                
                 Utility::pauseScreen();
             }
         } catch (...) {
@@ -601,11 +546,19 @@ private:
     }
 };
 
-// ========== TYPING TEST MANAGER CLASS ==========
 class TypingTestManager {
 private:
     const string TYPING_DIR = "typing_content/";
     vector<string> subjects = {"Physics", "Chemistry", "English", "Mathematics", "Biology", "General"};
+    
+    struct TypingResult {
+        int wordsTyped;
+        int correctChars;
+        int totalChars;
+        double timeTaken;
+        double wpm;
+        double accuracy;
+    };
     
 public:
     TypingTestManager() {
@@ -613,75 +566,33 @@ public:
         initializeDefaultContent();
     }
     
-    vector<string> getSubjects() const {
-        return subjects;
-    }
-    
-    string getTypingContent(const string& subject) {
-        string filename = TYPING_DIR + subject + ".txt";
-        ifstream file(filename);
-        
-        if (!file.is_open()) {
-            createDefaultContentForSubject(subject);
-            file.open(filename);
-        }
-        
-        string content;
-        string line;
-        while (getline(file, line)) {
-            content += line + " ";
-        }
-        file.close();
-        
-        return content;
-    }
-    
-    void showTypingTestMenu() {
+    void showTypingMenu(User* user) {
         while (true) {
             Utility::clearScreen();
-            
-            // Cool ASCII art header
             Utility::setColor(COLOR_PURPLE);
-            cout << "==========================================================\n";
-            cout << "          EEEEE  DDDD   U   U   QQQ   U   U  EEEEE  SSSS T\n";
-            cout << "          E      D   D  U   U  Q   Q  U   U  E      S     \n";
-            cout << "          EEEE   D   D  U   U  Q   Q  U   U  EEEE    SSS  \n";
-            cout << "          E      D   D  U   U  Q  QQ  U   U  E          S \n";
-            cout << "          EEEEE  DDDD    UUU    QQQQ   UUU   EEEEE  SSSS  \n";
-            cout << "                                                          \n";
-            cout << "          1-MINUTE TYPING CHALLENGE                       \n";
-            cout << "          MONKEYTYPE STYLE - IMPROVE YOUR SPEED!          \n";
-            cout << "                                                          \n";
-            cout << "==========================================================\n";
+            cout << "================================================\n";
+            cout << "          EDU-TAINMENT TYPING CHALLENGE        \n";
+            cout << "          1-MINUTE TIMED TEST                 \n";
+            cout << "================================================\n\n";
             Utility::setColor(COLOR_RESET);
             
-            cout << "\nSELECT SUBJECT FOR TYPING TEST:\n";
-            cout << "═══════════════════════════════════════════════════\n\n";
-            
+            cout << "SELECT SUBJECT:\n";
             for (size_t i = 0; i < subjects.size(); i++) {
-                cout << "  " << i + 1 << ". " << subjects[i] << "\n";
+                cout << i + 1 << ". " << subjects[i] << "\n";
             }
-            cout << "  " << subjects.size() + 1 << ". Back to Main Menu\n";
+            cout << subjects.size() + 1 << ". Back\n";
             
-            cout << "\n═══════════════════════════════════════════════════\n";
-            Utility::setColor(COLOR_YELLOW);
-            cout << "\n  Choice (1-" << subjects.size() + 1 << "): ";
-            Utility::setColor(COLOR_RESET);
-            
+            cout << "\nChoice: ";
             string input;
             getline(cin, input);
             
-            if (Utility::checkExit() || input.empty()) {
-                return;
-            }
+            if (Utility::checkExit() || input.empty()) return;
             
             try {
                 int choice = stoi(input);
-                if (choice == subjects.size() + 1) {
-                    return;
-                }
+                if (choice == subjects.size() + 1) return;
                 if (choice >= 1 && choice <= subjects.size()) {
-                    return; // Subject selected
+                    runTypingTest(subjects[choice - 1], user);
                 }
             } catch (...) {
                 Utility::printError("Invalid input!");
@@ -690,100 +601,98 @@ public:
         }
     }
     
-    void runTimedTypingTest(const string& subject, User* currentUser) {
-        string content = getTypingContent(subject);
-        
+    void runTypingTest(const string& subject, User* user) {
+        string content = loadContent(subject);
         if (content.empty()) {
-            Utility::printError("No typing content available!");
+            Utility::printError("No content available!");
             Utility::pauseScreen();
             return;
         }
         
-        // Split into words
-        vector<string> allWords = splitIntoWords(content);
-        if (allWords.size() < 20) {
-            Utility::printError("Not enough words for test!");
-            Utility::pauseScreen();
-            return;
-        }
+        vector<string> words = splitIntoWords(content);
         
-        // Take first 100 words or all if less
-        int maxWords = min(100, (int)allWords.size());
-        vector<string> testWords(allWords.begin(), allWords.begin() + maxWords);
+        showInstructions();
         
-        // Display instructions
-        Utility::clearScreen();
-        Utility::setColor(COLOR_PURPLE);
-        cout << "==========================================================\n";
-        cout << "          EEEEE  DDDD   U   U   QQQ   U   U  EEEEE  SSSS T\n";
-        cout << "          E      D   D  U   U  Q   Q  U   U  E      S     \n";
-        cout << "          EEEE   D   D  U   U  Q   Q  U   U  EEEE    SSS  \n";
-        cout << "          E      D   D  U   U  Q  QQ  U   U  E          S \n";
-        cout << "          EEEEE  DDDD    UUU    QQQQ   UUU   EEEEE  SSSS  \n";
-        cout << "                                                          \n";
-        cout << "          TYPING TEST - " << left << setw(23) << subject << "\n";
-        cout << "          1-MINUTE CHALLENGE                             \n";
-        cout << "                                                          \n";
-        cout << "==========================================================\n";
-        Utility::setColor(COLOR_RESET);
-        
-        cout << "\nINSTRUCTIONS:\n";
-        cout << "1. Type the text as it appears\n";
-        cout << "2. Press SPACE after each word\n";
-        cout << "3. Test lasts 1 minute\n";
-        cout << "4. Press ESC to quit early\n";
-        cout << "5. Focus on accuracy AND speed!\n\n";
-        
-        Utility::setColor(COLOR_YELLOW);
-        cout << "Press ENTER to start the 1-minute timer...";
-        Utility::setColor(COLOR_RESET);
-        cin.ignore();
+        cout << "\nPress ENTER to start...";
         cin.get();
         
-        // Start the timed test
-        runTypingTestCore(subject, testWords, currentUser);
+        TypingResult result = startTest(words, subject);
+        showResults(result, user);
     }
     
-    void runTypingTestCore(const string& subject, const vector<string>& testWords, User* currentUser) {
-        int totalWords = testWords.size();
+private:
+    string loadContent(const string& subject) {
+        string filename = TYPING_DIR + subject + ".txt";
+        ifstream file(filename);
+        if (!file.is_open()) {
+            createDefaultContent(subject);
+            file.open(filename);
+        }
+        
+        string content, line;
+        while (getline(file, line)) {
+            content += line + " ";
+        }
+        file.close();
+        return content;
+    }
+    
+    vector<string> splitIntoWords(const string& text) {
+        vector<string> words;
+        stringstream ss(text);
+        string word;
+        while (ss >> word) {
+            words.push_back(word);
+        }
+        return words;
+    }
+    
+    void showInstructions() {
+        Utility::clearScreen();
+        Utility::setColor(COLOR_CYAN);
+        cout << "================================================\n";
+        cout << "                INSTRUCTIONS                   \n";
+        cout << "================================================\n\n";
+        Utility::setColor(COLOR_RESET);
+        cout << "1. Type the words as they appear\n";
+        cout << "2. Press SPACE after each word\n";
+        cout << "3. Test duration: 60 seconds\n";
+        cout << "4. Focus on both speed and accuracy\n";
+        cout << "5. Press ESC to quit early\n";
+        cout << "\nWPM = (Words Typed / Time in Minutes)\n";
+        cout << "Accuracy = (Correct Characters / Total) * 100%\n";
+    }
+    
+    TypingResult startTest(const vector<string>& words, const string& subject) {
         int currentWord = 0;
         int correctChars = 0;
-        int totalTypedChars = 0;
+        int totalChars = 0;
         string currentInput = "";
-        bool testActive = true;
         
-        // Start timer (60 seconds)
         time_t startTime = time(nullptr);
-        time_t endTime = startTime + 60; // 1 minute
+        time_t endTime = startTime + 60;
         
-        // Clear screen for test
+        // Initial display
         Utility::clearScreen();
+        displayTestScreen(words, currentWord, currentInput, 60, subject, correctChars, totalChars, true);
         
-        while (testActive && currentWord < totalWords) {
-            // Check time
+        while (currentWord < min(150, (int)words.size())) {
             time_t currentTime = time(nullptr);
             int timeLeft = endTime - currentTime;
             
-            if (timeLeft <= 0) {
-                testActive = false;
-                break;
+            if (timeLeft <= 0) break;
+            
+            // Update only the changing parts
+            if (displayTestScreen(words, currentWord, currentInput, timeLeft, subject, correctChars, totalChars, false)) {
+                // Screen was redrawn
             }
             
-            // Display test interface
-            displayTestInterface(subject, testWords, currentWord, currentInput, 
-                               timeLeft, correctChars, totalTypedChars);
-            
-            // Get input
             if (_kbhit()) {
                 char ch = _getch();
                 
-                if (ch == 27) { // ESC key to quit
-                    cout << "\n\n";
-                    Utility::setColor(COLOR_YELLOW);
-                    cout << "[!] Test cancelled by user!\n";
-                    Utility::setColor(COLOR_RESET);
-                    Utility::pauseScreen();
-                    return;
+                if (ch == 27) { // ESC
+                    return {currentWord, correctChars, totalChars, 
+                           difftime(currentTime, startTime), 0, 0};
                 }
                 
                 if (ch == 8) { // Backspace
@@ -791,412 +700,491 @@ public:
                         currentInput.pop_back();
                     }
                 }
-                else if (ch == 32) { // Space - check word
-                    if (currentWord < totalWords) {
-                        string targetWord = testWords[currentWord];
-                        totalTypedChars += targetWord.length() + 1; // +1 for space
+                else if (ch == 32) { // Space
+                    if (currentWord < words.size()) {
+                        string target = words[currentWord];
+                        totalChars += target.length() + 1;
                         
-                        if (currentInput == targetWord) {
-                            correctChars += targetWord.length();
+                        if (currentInput == target) {
+                            correctChars += target.length();
+                        }
+                        else {
+                            // Count matching characters
+                            int match = 0;
+                            int len = min(currentInput.length(), target.length());
+                            for (int i = 0; i < len; i++) {
+                                if (currentInput[i] == target[i]) match++;
+                            }
+                            correctChars += match;
                         }
                         
                         currentWord++;
                         currentInput = "";
                     }
                 }
-                else if (isprint(ch)) { // Printable character
+                else if (isprint(ch)) {
                     currentInput += ch;
                 }
             }
             
-            // Small delay to make it smooth
-            Sleep(50);
+            Sleep(10);
         }
         
-        // Calculate final results
-        time_t finalTime = time(nullptr);
-        double actualTime = difftime(finalTime, startTime);
-        double minutes = actualTime / 60.0;
-        
-        // Words per minute
+        time_t finishTime = time(nullptr);
+        double timeTaken = difftime(finishTime, startTime);
+        double minutes = timeTaken / 60.0;
         double wpm = (minutes > 0) ? (currentWord / minutes) : 0;
+        double accuracy = (totalChars > 0) ? (correctChars * 100.0 / totalChars) : 0;
         
-        // Accuracy calculation
-        double accuracy = (totalTypedChars > 0) ? (correctChars * 100.0 / totalTypedChars) : 0;
-        
-        // Show results
-        showFinalResults(subject, currentWord, actualTime, wpm, accuracy, currentUser);
+        return {currentWord, correctChars, totalChars, timeTaken, wpm, accuracy};
     }
     
-    void updateTypingContent(const string& subject) {
-        string filename = TYPING_DIR + subject + ".txt";
+    bool displayTestScreen(const vector<string>& words, int currentIndex,
+                         const string& input, int timeLeft, const string& subject,
+                         int correctChars, int totalChars, bool initial = false) {
+        static int lastCurrentIndex = -1;
+        static string lastInput = "";
+        static int lastTimeLeft = -1;
         
-        ifstream file(filename);
-        if (file.is_open()) {
-            Utility::printHeader("UPDATE TYPING CONTENT - " + subject);
-            cout << "Current content preview:\n";
-            cout << "========================\n";
-            
-            string line;
-            int lines = 0;
-            while (getline(file, line) && lines < 5) {
-                cout << line << "\n";
-                lines++;
-            }
-            file.close();
-            
-            cout << "\n========================\n";
-            cout << "\nEnter new content (type END on new line):\n";
-            
-            string newContent, lineInput;
-            while (true) {
-                getline(cin, lineInput);
-                if (lineInput == "END") break;
-                newContent += lineInput + "\n";
-            }
-            
-            ofstream outFile(filename);
-            if (outFile.is_open()) {
-                outFile << newContent;
-                outFile.close();
-                Utility::printSuccess("Content updated!");
-            }
+        // Only redraw if something changed
+        if (!initial && currentIndex == lastCurrentIndex && 
+            input == lastInput && timeLeft == lastTimeLeft) {
+            return false;
         }
-    }
-    
-    void deleteTypingContent(const string& subject) {
-        string filename = TYPING_DIR + subject + ".txt";
         
-        cout << "Delete typing content for " << subject << "? (y/n): ";
-        string confirm;
-        getline(cin, confirm);
+        lastCurrentIndex = currentIndex;
+        lastInput = input;
+        lastTimeLeft = timeLeft;
         
-        if (Utility::toLower(confirm) == "y") {
-            if (remove(filename.c_str()) == 0) {
-                Utility::printSuccess("Content deleted!");
+        // Clear screen for initial display, otherwise update in place
+        if (initial) {
+            Utility::clearScreen();
+        } else {
+            // Move cursor to top
+            COORD cursorPos = {0, 0};
+            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPos);
+        }
+        
+        Utility::setColor(COLOR_PURPLE);
+        cout << "================================================\n";
+        cout << "  " << subject << " TYPING TEST | Time: " 
+             << setw(2) << timeLeft << " sec\n";
+        cout << "================================================\n\n";
+        Utility::setColor(COLOR_RESET);
+        
+        // Display words (8-10 words at a time)
+        int wordsToShow = 8;
+        int start = currentIndex;
+        int end = min(start + wordsToShow, (int)words.size());
+        
+        for (int i = start; i < end; i++) {
+            if (i == currentIndex) {
+                // Current word with highlighting
+                string target = words[i];
+                
+                // Show typed part
+                int correct = 0;
+                int len = min(input.length(), target.length());
+                for (int j = 0; j < len; j++) {
+                    if (input[j] == target[j]) correct++;
+                    else break;
+                }
+                
+                if (correct > 0) {
+                    Utility::setColor(COLOR_GREEN);
+                    cout << target.substr(0, correct);
+                }
+                
+                if (correct < target.length()) {
+                    if (input.length() > correct) {
+                        Utility::setColor(COLOR_RED);
+                        cout << target[correct];
+                        if (correct + 1 < target.length()) {
+                            Utility::setColor(COLOR_CYAN);
+                            cout << target.substr(correct + 1);
+                        }
+                    } else {
+                        Utility::setColor(COLOR_CYAN);
+                        cout << target.substr(correct);
+                    }
+                }
             } else {
-                Utility::printError("Failed to delete!");
+                Utility::setColor(COLOR_CYAN);
+                cout << words[i];
+            }
+            
+            if (i < end - 1) cout << " ";
+        }
+        
+        // Clear the "Your typing:" line and rewrite it
+        cout << "\n\nYour typing: ";
+        Utility::setColor(COLOR_YELLOW);
+        
+        // Display only the current word being typed, not previous words
+        cout << input;
+        
+        // Display underscores for remaining characters in current word
+        if (currentIndex < words.size()) {
+            string target = words[currentIndex];
+            int remaining = target.length() - input.length();
+            if (remaining > 0) {
+                for (int i = 0; i < remaining; i++) {
+                    cout << "_";
+                }
             }
         }
+        
+        cout << "\n\n";
+        Utility::setColor(COLOR_RESET);
+        
+        // Calculate stats
+        double accuracy = (totalChars > 0) ? (correctChars * 100.0 / totalChars) : 100.0;
+        double timeElapsed = 60 - timeLeft;
+        double minutesElapsed = timeElapsed / 60.0;
+        double wpm = (minutesElapsed > 0) ? (currentIndex / minutesElapsed) : 0;
+        
+        cout << "Words: " << currentIndex;
+        cout << " | WPM: " << fixed << setprecision(1) << wpm;
+        cout << " | Accuracy: " << fixed << setprecision(1) << accuracy << "%";
+        cout << "\n" << string(50, '-') << "\n";
+        cout << "Press SPACE for next word | ESC to quit";
+        
+        // Clear any remaining lines
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
+        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+        COORD cursorPos = {0, 10};
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPos);
+        
+        // Clear lines below if needed
+        DWORD written;
+        FillConsoleOutputCharacter(GetStdHandle(STD_OUTPUT_HANDLE), ' ', 
+                                   csbi.dwSize.X * 10, cursorPos, &written);
+        
+        // Move cursor back to typing position
+        cursorPos = {14, 6}; // Position after "Your typing: "
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPos);
+        
+        return true;
     }
     
-private:
-    void initializeDefaultContent() {
-        for (const auto& subject : subjects) {
-            string filename = TYPING_DIR + subject + ".txt";
-            if (!Utility::fileExists(filename)) {
-                createDefaultContentForSubject(subject);
-            }
+    void showResults(const TypingResult& result, User* user) {
+        Utility::clearScreen();
+        Utility::setColor(COLOR_PURPLE);
+        cout << "================================================\n";
+        cout << "               TEST RESULTS                    \n";
+        cout << "================================================\n\n";
+        Utility::setColor(COLOR_RESET);
+        
+        cout << fixed << setprecision(1);
+        cout << "Words Typed:  " << result.wordsTyped << "\n";
+        cout << "Time Taken:   " << result.timeTaken << " seconds\n";
+        cout << "WPM:          " << result.wpm << "\n";
+        cout << "Accuracy:     " << result.accuracy << "%\n";
+        
+        // Calculate points
+        int points = 0;
+        if (result.wpm >= 60 && result.accuracy >= 95) {
+            points = 50;
+            Utility::setColor(COLOR_GREEN);
+            cout << "\nRating: EXPERT\n";
+        } else if (result.wpm >= 40 && result.accuracy >= 90) {
+            points = 30;
+            Utility::setColor(COLOR_CYAN);
+            cout << "\nRating: ADVANCED\n";
+        } else if (result.wpm >= 25 && result.accuracy >= 85) {
+            points = 20;
+            Utility::setColor(COLOR_YELLOW);
+            cout << "\nRating: INTERMEDIATE\n";
+        } else if (result.wpm >= 15 && result.accuracy >= 80) {
+            points = 10;
+            Utility::setColor(COLOR_WHITE);
+            cout << "\nRating: BEGINNER\n";
+        } else {
+            points = 5;
+            Utility::setColor(COLOR_RED);
+            cout << "\nRating: NEEDS PRACTICE\n";
         }
+        
+        if (user) {
+            user->addPoints(points);
+            cout << "Points Earned: " << points << "\n";
+            cout << "Total Points: " << user->getPoints() << "\n";
+        }
+        
+        Utility::setColor(COLOR_RESET);
+        cout << "\n" << string(50, '-') << "\n";
+        Utility::pauseScreen();
     }
     
-    void createDefaultContentForSubject(const string& subject) {
+    void createDefaultContent(const string& subject) {
         string filename = TYPING_DIR + subject + ".txt";
         ofstream file(filename);
         
         if (subject == "Physics") {
-            file << "Motion is defined as the change in position of an object with respect to time.\n";
-            file << "Force is any interaction that when unopposed will change the motion of an object.\n";
-            file << "Newton's first law states that an object at rest stays at rest unless acted upon.\n";
-            file << "Velocity is the speed of something in a given direction measured in meters per second.\n";
-            file << "Acceleration is the rate of change of velocity per unit of time in physics.\n";
-            file << "Gravity is a force that attracts a body toward the center of the earth or other mass.\n";
-            file << "Energy exists in many forms such as kinetic potential thermal electrical chemical.\n";
-            file << "Momentum is the product of the mass and velocity of an object in classical mechanics.\n";
-            file << "Work is done when a force moves an object through a distance in the direction of force.\n";
-            file << "Power is the rate at which work is done or energy is transferred over time.\n";
+            file << "Physics studies matter energy and their interactions through fundamental forces. ";
+            file << "Newton's laws describe motion with inertia force and action reaction principles. ";
+            file << "Energy conservation states total energy remains constant in isolated systems forever. ";
+            file << "Electromagnetism involves electric charges magnetic fields and electromagnetic waves. ";
+            file << "Thermodynamics deals with heat temperature and their relation to energy and work. ";
+            file << "Quantum mechanics explains particle behavior at atomic and subatomic tiny scales. ";
+            file << "Relativity theory describes physics in non inertial frames and gravity effects. ";
+            file << "Optics studies light behavior including reflection refraction and diffraction. ";
+            file << "Nuclear physics examines atomic nuclei their structure and radioactive decay. ";
+            file << "Astrophysics applies physics principles to astronomical objects and phenomena. ";
+            file << "Kinematics analyzes motion without considering forces or masses of objects. ";
+            file << "Dynamics studies motion causes considering forces acting upon moving bodies. ";
+            file << "Mechanics branch deals with bodies motion under action of various forces. ";
+            file << "Acoustics science explores sound properties including production transmission. ";
+            file << "Fluid mechanics examines liquids gases behavior in motion and rest states. ";
+            file << "Statistical mechanics connects microscopic properties to macroscopic observations. ";
+            file << "Solid state physics investigates rigid matter crystals and their properties. ";
+            file << "Plasma physics studies ionized gases and their collective behavior patterns. ";
+            file << "Condensed matter physics explores matter phases with strong particle interactions. ";
+            file << "Particle physics investigates elementary constituents of matter and forces. ";
+            file << "Gravitation describes attraction between objects with mass in universe. ";
+            file << "Momentum product of mass velocity remains constant without external forces. ";
+            file << "Torque rotational force causes angular acceleration in rotating systems. ";
+            file << "Work energy transfer occurs when force moves object through distance. ";
+            file << "Power rate work done measures energy transfer speed over time. ";
         }
-                else if (subject == "Chemistry") {
-            file << "Elements are pure substances that cannot be broken down into simpler substances.\n";
-            file << "Atoms are the basic building blocks of all matter consisting of protons neutrons.\n";
-            file << "Compounds are formed when two or more different elements chemically combine.\n";
-            file << "Chemical reactions occur when substances interact to form new substances.\n";
-            file << "The periodic table organizes elements according to their atomic number properties.\n";
-            file << "Molecules are groups of atoms bonded together representing the smallest unit.\n";
-            file << "Chemical bonds include ionic covalent and metallic bonds between atoms.\n";
-            file << "Acids are substances that donate hydrogen ions while bases accept them.\n";
-            file << "pH is a measure of how acidic or basic a solution is on a logarithmic scale.\n";
-            file << "Chemical equations show reactants and products in a balanced format.\n";
-        }
-        else if (subject == "English") {
-            file << "Grammar is the system and structure of a language including syntax morphology.\n";
-            file << "Vocabulary refers to the set of words within a language that someone knows.\n";
-            file << "Pronunciation is the way in which a word is spoken using correct sounds.\n";
-            file << "Literature is written works especially those considered of superior quality.\n";
-            file << "Punctuation marks help clarify meaning in written English sentences.\n";
-            file << "Communication involves transmitting information through various methods.\n";
-            file << "Comprehension is the ability to understand something complex or abstract.\n";
-            file << "Writing skills include proper sentence structure paragraph organization.\n";
-            file << "Reading fluency involves reading quickly accurately with proper expression.\n";
-            file << "Critical thinking evaluates information and arguments in a logical manner.\n";
+        else if (subject == "Chemistry") {
+            file << "Chemistry explores matter properties composition structure and chemical transformations. ";
+            file << "Elements consist of identical atoms distinguished by their atomic number protons. ";
+            file << "Chemical bonds form through electron sharing transfer creating molecules compounds. ";
+            file << "Periodic table organizes elements based on recurring chemical properties trends. ";
+            file << "Chemical reactions involve breaking forming bonds yielding new different substances. ";
+            file << "Acids bases and salts exhibit characteristic properties in aqueous solutions. ";
+            file << "Organic chemistry studies carbon compounds including hydrocarbons functional groups. ";
+            file << "Thermochemistry examines energy changes during chemical reactions and processes. ";
+            file << "Electrochemistry involves chemical reactions producing electricity or vice versa. ";
+            file << "Chemical kinetics studies reaction rates and factors influencing their speed. ";
+            file << "Stoichiometry calculates reactant product quantities in chemical reactions. ";
+            file << "Atomic structure includes protons neutrons electrons in specific arrangements. ";
+            file << "Molecular geometry describes three dimensional shapes of chemical molecules. ";
+            file << "Chemical equilibrium occurs when forward reverse reaction rates equalize. ";
+            file << "Solutions homogeneous mixtures contain solute dissolved in solvent medium. ";
+            file << "Colligative properties depend on solute concentration not its identity. ";
+            file << "Chemical thermodynamics studies energy transformations during chemical processes. ";
+            file << "Coordination chemistry examines complexes containing central metal atom. ";
+            file << "Analytical chemistry identifies measures chemical components in samples. ";
+            file << "Biochemistry studies chemical processes within living biological organisms. ";
+            file << "Polymer chemistry investigates large molecules composed repeating subunits. ";
+            file << "Nuclear chemistry examines changes occurring within atomic nuclei structures. ";
+            file << "Environmental chemistry studies chemical phenomena occurring in nature. ";
+            file << "Materials science explores properties applications of various substances. ";
+            file << "Spectroscopy analyzes interaction between matter and electromagnetic radiation. ";
         }
         else if (subject == "Mathematics") {
-            file << "Algebra uses letters and symbols to represent numbers in equations formulas.\n";
-            file << "Geometry studies shapes sizes relative positions of figures and properties.\n";
-            file << "Calculus is the mathematical study of continuous change through derivatives.\n";
-            file << "Statistics involves collecting analyzing interpreting presenting data sets.\n";
-            file << "Trigonometry deals with relationships between angles and sides of triangles.\n";
-            file << "Arithmetic is the branch of mathematics dealing with numbers and operations.\n";
-            file << "Probability measures the likelihood that an event will occur in mathematics.\n";
-            file << "Linear equations represent straight lines when graphed on coordinate plane.\n";
-            file << "Functions relate inputs to outputs with each input having exactly one output.\n";
-            file << "Mathematical proofs provide logical arguments establishing truth of theorems.\n";
+            file << "Mathematics uses logical reasoning to study quantities structures patterns changes. ";
+            file << "Algebra manipulates symbols variables equations to solve mathematical problems. ";
+            file << "Geometry analyzes shapes sizes positions angles and dimensions of figures. ";
+            file << "Calculus explores rates of change through derivatives and accumulation via integrals. ";
+            file << "Statistics collects analyzes interprets presents and organizes numerical data. ";
+            file << "Trigonometry examines relationships between angles and sides of triangles. ";
+            file << "Probability quantifies likelihood of events occurring in random experiments. ";
+            file << "Number theory studies integers and their properties relationships patterns. ";
+            file << "Linear algebra investigates vectors matrices linear equations transformations. ";
+            file << "Differential equations describe relationships involving functions and derivatives. ";
+            file << "Set theory foundation mathematics deals with collections of distinct objects. ";
+            file << "Combinatorics studies counting arrangement and combination possibilities. ";
+            file << "Topology explores properties preserved through continuous deformations stretching. ";
+            file << "Complex analysis examines functions of complex variables with applications. ";
+            file << "Numerical analysis develops algorithms for solving mathematical problems. ";
+            file << "Graph theory studies networks vertices edges and their connections. ";
+            file << "Mathematical logic explores reasoning validity proof and computability concepts. ";
+            file << "Optimization finds best solutions from available feasible alternative options. ";
+            file << "Cryptography secures communication through encryption decryption techniques. ";
+            file << "Game theory analyzes strategic interactions between rational decision makers. ";
+            file << "Fractal geometry studies infinitely complex patterns repeating at different scales. ";
+            file << "Mathematical modeling represents real world systems using mathematical concepts. ";
+            file << "Abstract algebra studies algebraic structures groups rings and fields. ";
+            file << "Real analysis rigorously examines real numbers sequences series functions. ";
+            file << "Functional analysis studies vector spaces endowed with limit related structures. ";
         }
         else if (subject == "Biology") {
-            file << "Cells are the basic structural and functional units of all living organisms.\n";
-            file << "DNA contains genetic instructions used in development functioning of organisms.\n";
-            file << "Evolution is the change in characteristics of species over many generations.\n";
-            file << "Photosynthesis converts light energy into chemical energy in green plants.\n";
-            file << "Ecosystems consist of biological communities interacting with their environment.\n";
-            file << "Genetics is the study of genes genetic variation and heredity in organisms.\n";
-            file << "Metabolism includes all chemical reactions that occur within living cells.\n";
-            file << "Homeostasis is the state of steady internal conditions maintained by organisms.\n";
-            file << "Classification organizes organisms into hierarchical groups based on features.\n";
-            file << "Physiology studies how living organisms their systems organs and cells function.\n";
+            file << "Biology studies living organisms including their structure function growth origin. ";
+            file << "Cells represent basic structural functional units of all known living organisms. ";
+            file << "DNA molecules carry genetic instructions used in development functioning of life. ";
+            file << "Evolution explains diversity of life through natural selection genetic variation. ";
+            file << "Ecosystems comprise biological communities interacting with physical environments. ";
+            file << "Genetics examines heredity gene variation in living organisms and their traits. ";
+            file << "Physiology explores mechanical physical biochemical functions of living systems. ";
+            file << "Taxonomy classifies organisms into hierarchical groups based on shared characteristics. ";
+            file << "Ecology investigates interactions among organisms and their physical surroundings. ";
+            file << "Biochemistry studies chemical processes within and relating to living organisms. ";
+            file << "Microbiology examines microscopic organisms including bacteria viruses fungi. ";
+            file << "Botany scientific study of plants including their physiology structure genetics. ";
+            file << "Zoology branch biology dealing with animal kingdom structure and behavior. ";
+            file << "Anatomy studies structure organisms and their parts tissues organs systems. ";
+            file << "Embryology examines development embryos from fertilization until birth. ";
+            file << "Immunology explores immune system responses to pathogens and foreign substances. ";
+            file << "Neuroscience studies nervous system structure development function disorders. ";
+            file << "Marine biology examines organisms ecosystems in oceans and saltwater environments. ";
+            file << "Molecular biology investigates molecular basis biological activity within cells. ";
+            file << "Cell biology examines structure function physiological properties of cells. ";
+            file << "Developmental biology studies process growth and development of organisms. ";
+            file << "Evolutionary biology explores evolutionary processes producing diversity life. ";
+            file << "Population biology examines dynamics species populations and interactions. ";
+            file << "Conservation biology studies biodiversity protection endangered species habitats. ";
+            file << "Biotechnology uses living systems organisms develop make useful products. ";
+        }
+        else if (subject == "English") {
+            file << "English language proficiency involves grammar vocabulary reading writing skills. ";
+            file << "Grammar establishes structural rules governing composition of clauses phrases words. ";
+            file << "Vocabulary represents set of familiar words within person's particular language. ";
+            file << "Literature encompasses written works especially those considered artistic value. ";
+            file << "Comprehension involves understanding interpreting written or spoken information. ";
+            file << "Communication transmits information through various verbal and nonverbal methods. ";
+            file << "Punctuation marks clarify meaning by indicating pauses separating sentence elements. ";
+            file << "Syntax studies arrangement of words phrases to create well formed sentences. ";
+            file << "Phonetics examines physical sounds of human speech including their production. ";
+            file << "Semantics explores meaning in language including word sense and sentence logic. ";
+            file << "Phonology studies sound patterns within particular languages and systems. ";
+            file << "Morphology analyzes word structure formation and meaningful components. ";
+            file << "Pragmatics examines how context contributes to language meaning understanding. ";
+            file << "Discourse analysis studies written spoken language use beyond sentence level. ";
+            file << "Stylistics explores linguistic style variation in different contexts uses. ";
+            file << "Rhetoric studies principles rules governing effective persuasive communication. ";
+            file << "Poetry literary form uses aesthetic rhythmic qualities language evoke meaning. ";
+            file << "Prose written spoken language follows natural flow speech grammatical structure. ";
+            file << "Fiction narrative literature describes imaginary events and people characters. ";
+            file << "Nonfiction prose writing based on facts real events and actual people. ";
+            file << "Drama literature intended performance by actors on stage theater. ";
+            file << "Essay short piece writing on particular subject expressing author views. ";
+            file << "Biography detailed description person's life written by someone else. ";
+            file << "Autobiography account person's life written by that individual themselves. ";
+            file << "Journalism collection editing presentation news information newspapers media. ";
+            file << "Translation process rendering text from one language into another accurately. ";
         }
         else { // General
-            file << "Practice makes perfect when it comes to improving typing speed and accuracy.\n";
-            file << "The quick brown fox jumps over the lazy dog contains all alphabet letters.\n";
-            file << "Typing skills are essential in today's digital world for communication work.\n";
-            file << "Accuracy is more important than speed when beginning to learn typing skills.\n";
-            file << "Regular practice sessions help develop muscle memory for keyboard positions.\n";
-            file << "Proper posture and hand placement can prevent strain and improve efficiency.\n";
-            file << "Touch typing involves typing without looking at the keyboard using muscle memory.\n";
-            file << "Typing tests measure words per minute and accuracy percentage for assessment.\n";
-            file << "Consistent practice over time yields better results than occasional sessions.\n";
-            file << "Keyboard shortcuts can significantly improve productivity in computer usage.\n";
+            file << "The quick brown fox jumps over the lazy dog repeatedly during practice sessions. ";
+            file << "Typing speed improves through consistent practice and proper finger positioning. ";
+            file << "Accuracy remains crucial for effective communication and professional documents. ";
+            file << "Regular exercises build muscle memory enhancing both speed and precision over time. ";
+            file << "Proper posture and ergonomic equipment prevent strain during extended typing periods. ";
+            file << "Keyboard shortcuts increase productivity by reducing reliance on mouse navigation. ";
+            file << "Touch typing involves typing without looking at keyboard keys for faster input. ";
+            file << "Practice sessions should include varied texts to adapt to different word patterns. ";
+            file << "Monitoring words per minute helps track progress and identify improvement areas. ";
+            file << "Consistent practice yields better results than occasional intensive typing sessions. ";
+            file << "Typing proficiency enhances job opportunities and academic performance significantly. ";
+            file << "Different keyboard layouts exist including QWERTY DVORAK and Colemak arrangements. ";
+            file << "Finger placement home row keys provide reference points for efficient typing. ";
+            file << "Typing tests measure speed accuracy helping set realistic improvement goals. ";
+            file << "Online resources offer free typing lessons games for skill development. ";
+            file << "Professional typists often exceed hundred words per minute with high accuracy. ";
+            file << "Typing competitions showcase incredible speeds reaching two hundred words. ";
+            file << "Learning typing young creates lasting skills benefiting entire lifetime career. ";
+            file << "Mobile devices require different typing techniques than traditional keyboards. ";
+            file << "Voice recognition software complements but does not replace typing skills. ";
+            file << "Programming typing involves special characters symbols requiring practice. ";
+            file << "Data entry jobs demand both high speed and perfect accuracy standards. ";
+            file << "Transcription work requires excellent listening and fast typing abilities. ";
+            file << "Closed captioning realtime typing needs exceptional speed and concentration. ";
+            file << "Court reporters use specialized machines for verbatim transcription. ";
         }
         
         file.close();
     }
     
-    vector<string> splitIntoWords(const string& text) {
-        vector<string> words;
-        string currentWord;
-        
-        for (char ch : text) {
-            if (isalpha(ch) || isdigit(ch)) {
-                currentWord += ch;
-            } else if (!currentWord.empty()) {
-                words.push_back(currentWord);
-                currentWord.clear();
+    void initializeDefaultContent() {
+        for (const auto& subject : subjects) {
+            string filename = TYPING_DIR + subject + ".txt";
+            if (!Utility::fileExists(filename)) {
+                createDefaultContent(subject);
             }
         }
-        
-        if (!currentWord.empty()) {
-            words.push_back(currentWord);
-        }
-        
-        return words;
-    }
-    
-    void displayTestInterface(const string& subject, const vector<string>& words, 
-                             int currentWord, const string& currentInput, int timeLeft,
-                             int correctChars, int totalTypedChars) {
-        // Clear previous display
-        cout << "\033[H"; // Move cursor to home
-        
-        Utility::setColor(COLOR_PURPLE);
-        cout << "==========================================================\n";
-        cout << "          TYPING TEST - " << left << setw(33) << subject << "\n";
-        cout << "          TIME LEFT: " << setw(2) << timeLeft << " seconds                \n";
-        cout << "==========================================================\n";
-        Utility::setColor(COLOR_RESET);
-        
-        // Display current word and upcoming words
-        cout << "\nTYPE THIS TEXT:\n";
-        cout << "═══════════════════════════════════════════════════\n";
-        
-        Utility::setColor(COLOR_CYAN);
-        // Show previous words (greyed out)
-        int start = max(0, currentWord - 3);
-        for (int i = start; i < currentWord; i++) {
-            if (i > start) cout << " ";
-            Utility::setColor(COLOR_WHITE);
-            cout << words[i];
-        }
-        
-        if (currentWord < words.size()) {
-            if (currentWord > 0) cout << " ";
-            
-            // Show current word with highlighting
-            string targetWord = words[currentWord];
-            int matchLength = 0;
-            
-            // Check how many characters match
-            for (size_t i = 0; i < min(currentInput.length(), targetWord.length()); i++) {
-                if (currentInput[i] == targetWord[i]) {
-                    matchLength++;
-                } else {
-                    break;
-                }
-            }
-            
-            // Display matched part in green
-            Utility::setColor(COLOR_GREEN);
-            cout << targetWord.substr(0, matchLength);
-            
-            // Display incorrect part in red
-            if (currentInput.length() > matchLength) {
-                Utility::setColor(COLOR_RED);
-                if (matchLength < targetWord.length()) {
-                    cout << targetWord[matchLength];
-                }
-            } else {
-                // Display remaining part in cyan
-                Utility::setColor(COLOR_CYAN);
-                cout << targetWord.substr(matchLength);
-            }
-            
-            // Display upcoming words
-            Utility::setColor(COLOR_CYAN);
-            int wordsToShow = min(10, (int)words.size() - currentWord - 1);
-            for (int i = 1; i <= wordsToShow; i++) {
-                cout << " " << words[currentWord + i];
-            }
-        }
-        
-        cout << "\n═══════════════════════════════════════════════════\n\n";
-        
-        // Display current input
-        Utility::setColor(COLOR_YELLOW);
-        cout << "YOUR TYPING: ";
-        Utility::setColor(COLOR_RESET);
-        cout << currentInput;
-        
-        if (currentInput.length() < words[currentWord].length()) {
-            int remaining = words[currentWord].length() - currentInput.length();
-            for (int i = 0; i < remaining; i++) cout << "_";
-        }
-        
-        cout << "\n\n";
-        
-        // Display stats
-        Utility::setColor(COLOR_CYAN);
-        cout << "WORDS TYPED: " << currentWord;
-        cout << "   |   ";
-        
-        // Calculate current WPM
-        double minutesElapsed = (60 - timeLeft) / 60.0;
-        double currentWPM = (minutesElapsed > 0) ? (currentWord / minutesElapsed) : 0;
-        
-        cout << "CURRENT WPM: " << fixed << setprecision(1) << currentWPM;
-        cout << "   |   ";
-        
-        // Calculate current accuracy
-        double currentAccuracy = (totalTypedChars > 0) ? 
-            (correctChars * 100.0 / totalTypedChars) : 100.0;
-        
-        cout << "ACCURACY: " << fixed << setprecision(1) << currentAccuracy << "%\n";
-        Utility::setColor(COLOR_RESET);
-        
-        cout << "\n═══════════════════════════════════════════════════\n";
-        Utility::setColor(COLOR_YELLOW);
-        cout << "Tip: Type the word and press SPACE. Press ESC to quit.\n";
-        Utility::setColor(COLOR_RESET);
-    }
-    
-    void showFinalResults(const string& subject, int wordsTyped, double timeTaken,
-                         double wpm, double accuracy, User* currentUser) {
-        Utility::clearScreen();
-        
-        Utility::setColor(COLOR_PURPLE);
-        cout << "==========================================================\n";
-        cout << "          TYPING TEST COMPLETE!                          \n";
-        cout << "          SUBJECT: " << left << setw(30) << subject << "\n";
-        cout << "==========================================================\n\n";
-        Utility::setColor(COLOR_RESET);
-        
-        // Calculate performance rating
-        string rating;
-        int pointsEarned = 0;
-        
-        if (wpm >= 70 && accuracy >= 98) {
-            rating = "EXPERT";
-            pointsEarned = 50;
-            Utility::setColor(COLOR_GREEN);
-        } else if (wpm >= 50 && accuracy >= 95) {
-            rating = "ADVANCED";
-            pointsEarned = 30;
-            Utility::setColor(COLOR_CYAN);
-        } else if (wpm >= 30 && accuracy >= 90) {
-            rating = "INTERMEDIATE";
-            pointsEarned = 20;
-            Utility::setColor(COLOR_YELLOW);
-        } else if (wpm >= 15 && accuracy >= 80) {
-            rating = "BEGINNER";
-            pointsEarned = 10;
-            Utility::setColor(COLOR_WHITE);
-        } else {
-            rating = "NEEDS PRACTICE";
-            pointsEarned = 5;
-            Utility::setColor(COLOR_RED);
-        }
-        
-        // Display results
-        cout << "RESULTS:\n";
-        cout << "═══════════════════════════════════════════════════\n";
-        cout << "  Words Typed:  " << wordsTyped << "\n";
-        cout << "  Time Taken:   " << fixed << setprecision(1) << timeTaken << " seconds\n";
-        cout << "  WPM:          " << fixed << setprecision(1) << wpm << "\n";
-        cout << "  Accuracy:     " << fixed << setprecision(1) << accuracy << "%\n";
-        cout << "  Rating:       " << rating << "\n";
-        
-        if (currentUser) {
-            currentUser->addPoints(pointsEarned);
-            cout << "  Points Earned:" << pointsEarned << "\n";
-            cout << "  Total Points: " << currentUser->getPoints() << "\n";
-        }
-        
-        cout << "═══════════════════════════════════════════════════\n\n";
-        
-        Utility::setColor(COLOR_RESET);
-        
-        // Display motivational message
-        Utility::setColor(COLOR_CYAN);
-        cout << "FEEDBACK:\n";
-        if (wpm < 30) {
-            cout << "  Keep practicing! Focus on accuracy first, then speed.\n";
-        } else if (wpm < 50) {
-            cout << "  Good progress! Try to maintain accuracy while increasing speed.\n";
-        } else if (wpm < 70) {
-            cout << "  Excellent! You're becoming a proficient typist.\n";
-        } else {
-            cout << "  Outstanding! You're among the fastest typists!\n";
-        }
-        Utility::setColor(COLOR_RESET);
-        
-        Utility::pauseScreen();
     }
 };
 
-// ========== LEARNING RESOURCES CLASS ==========
-class LearningResources {
+class QuizManager {
 private:
-    const string RESOURCES_DIR = "resources/";
+    struct QuizQuestion {
+        string question;
+        vector<string> options;
+        int correctAnswer;
+    };
+    
+    map<string, vector<QuizQuestion>> subjectQuizzes;
     
 public:
-    LearningResources() {
-        Utility::createDirectory(RESOURCES_DIR);
-        initializeResources();
+    QuizManager() {
+        initializeQuizzes();
     }
     
-    void showResourcesMenu() {
+    void showQuizMenu(User* user) {
         while (true) {
-            Utility::printHeader("LEARNING RESOURCES");
-            
-            cout << "1. Open YouTube Educational Channels\n";
-            cout << "2. Open Khan Academy\n";
-            cout << "3. Open Coursera\n";
-            cout << "4. Open edX\n";
-            cout << "5. Open Crash Course\n";
-            cout << "6. Open MIT OpenCourseWare\n";
-            cout << "7. Open TED Ed\n";
-            cout << "8. Open Physics Classroom\n";
-            cout << "9. Open Wolfram Alpha\n";
-            cout << "10. Back to Main Menu\n\n";
+            Utility::printHeader("QUIZ CHALLENGE");
+            cout << "Select Subject:\n";
+            cout << "1. Physics\n";
+            cout << "2. Chemistry\n";
+            cout << "3. English\n";
+            cout << "4. Mathematics\n";
+            cout << "5. Biology\n";
+            cout << "6. Back\n\n";
             
             cout << "Choice: ";
+            string input;
+            getline(cin, input);
+            
+            if (Utility::checkExit() || input.empty()) return;
+            
+            try {
+                int choice = stoi(input);
+                string subject;
+                
+                switch (choice) {
+                    case 1: subject = "Physics"; break;
+                    case 2: subject = "Chemistry"; break;
+                    case 3: subject = "English"; break;
+                    case 4: subject = "Mathematics"; break;
+                    case 5: subject = "Biology"; break;
+                    case 6: return;
+                    default: 
+                        Utility::printError("Invalid choice!");
+                        Utility::pauseScreen();
+                        continue;
+                }
+                
+                runQuiz(subject, user);
+                
+            } catch (...) {
+                Utility::printError("Invalid input!");
+                Utility::pauseScreen();
+            }
+        }
+    }
+    
+private:
+    void runQuiz(const string& subject, User* user) {
+        if (subjectQuizzes.find(subject) == subjectQuizzes.end()) {
+            Utility::printError("No quizzes available!");
+            Utility::pauseScreen();
+            return;
+        }
+        
+        vector<QuizQuestion> questions = subjectQuizzes[subject];
+        int score = 0;
+        int totalQuestions = min(10, (int)questions.size());
+        
+        Utility::printHeader(subject + " QUIZ");
+        cout << "You will answer " << totalQuestions << " questions.\n";
+        cout << "Each correct answer gives 5 points.\n\n";
+        Utility::pauseScreen("Press Enter to start...");
+        
+        for (int i = 0; i < totalQuestions; i++) {
+            Utility::clearScreen();
+            cout << "Question " << (i + 1) << " of " << totalQuestions << "\n";
+            cout << "Score: " << score << "/" << (i * 5) << "\n\n";
+            
+            QuizQuestion q = questions[i];
+            cout << q.question << "\n\n";
+            
+            for (size_t j = 0; j < q.options.size(); j++) {
+                cout << (j + 1) << ". " << q.options[j] << "\n";
+            }
+            
+            cout << "\nYour answer (1-" << q.options.size() << "): ";
             string input;
             getline(cin, input);
             
@@ -1205,39 +1193,198 @@ public:
             }
             
             try {
+                int answer = stoi(input);
+                if (answer == q.correctAnswer) {
+                    Utility::setColor(COLOR_GREEN);
+                    cout << "\nCorrect! +5 points\n";
+                    score += 5;
+                    if (user) user->addPoints(5);
+                } else {
+                    Utility::setColor(COLOR_RED);
+                    cout << "\nIncorrect! Correct answer: " << q.correctAnswer << "\n";
+                }
+                Utility::setColor(COLOR_RESET);
+                Utility::pauseScreen();
+            } catch (...) {
+                Utility::printError("Invalid input! Skipping...");
+                Utility::pauseScreen();
+            }
+        }
+        
+        // Show final results
+        Utility::clearScreen();
+        Utility::setColor(COLOR_PURPLE);
+        cout << "================================================\n";
+        cout << "               QUIZ RESULTS                     \n";
+        cout << "================================================\n\n";
+        Utility::setColor(COLOR_RESET);
+        
+        cout << "Subject: " << subject << "\n";
+        cout << "Questions: " << totalQuestions << "\n";
+        cout << "Score: " << score << "/" << (totalQuestions * 5) << "\n";
+        cout << "Percentage: " << (score * 100 / (totalQuestions * 5)) << "%\n\n";
+        
+        if (score >= 40) {
+            Utility::setColor(COLOR_GREEN);
+            cout << "Excellent! You're an expert!\n";
+        } else if (score >= 30) {
+            Utility::setColor(COLOR_YELLOW);
+            cout << "Good job! Keep learning!\n";
+        } else {
+            Utility::setColor(COLOR_RED);
+            cout << "Keep studying! You can do better!\n";
+        }
+        
+        Utility::setColor(COLOR_RESET);
+        if (user) {
+            cout << "\nTotal points earned: " << score << "\n";
+            cout << "Your total points: " << user->getPoints() << "\n";
+        }
+        
+        cout << "\n" << string(50, '-') << "\n";
+        Utility::pauseScreen();
+    }
+    
+    void initializeQuizzes() {
+        // Physics Quiz
+        vector<QuizQuestion> physicsQuiz = {
+            {"What is the SI unit of force?", {"Newton", "Joule", "Watt", "Pascal"}, 1},
+            {"Which law states that every action has an equal and opposite reaction?", 
+             {"Newton's First Law", "Newton's Second Law", "Newton's Third Law", "Law of Gravity"}, 3},
+            {"What does 'm' represent in E=mc²?", {"Mass", "Momentum", "Matter", "Magnitude"}, 1},
+            {"Which type of energy is stored in a compressed spring?", 
+             {"Kinetic", "Thermal", "Potential", "Electrical"}, 3},
+            {"What is the speed of light in vacuum?", 
+             {"300,000 km/s", "150,000 km/s", "450,000 km/s", "600,000 km/s"}, 1},
+            {"Which particle has a positive charge?", {"Electron", "Neutron", "Proton", "Photon"}, 3},
+            {"What is the study of motion called?", {"Dynamics", "Kinematics", "Statics", "Thermodynamics"}, 2},
+            {"Which law states that energy cannot be created or destroyed?", 
+             {"First Law of Thermodynamics", "Second Law of Thermodynamics", 
+              "Law of Conservation of Energy", "Ohm's Law"}, 3},
+            {"What is the unit of electrical resistance?", {"Volt", "Ampere", "Ohm", "Watt"}, 3},
+            {"Which scientist developed the theory of relativity?", 
+             {"Newton", "Einstein", "Galileo", "Tesla"}, 2}
+        };
+        subjectQuizzes["Physics"] = physicsQuiz;
+        
+        // Chemistry Quiz
+        vector<QuizQuestion> chemistryQuiz = {
+            {"What is the atomic number of oxygen?", {"6", "7", "8", "9"}, 3},
+            {"Which gas is most abundant in Earth's atmosphere?", 
+             {"Oxygen", "Carbon Dioxide", "Nitrogen", "Argon"}, 3},
+            {"What is H2O commonly known as?", {"Hydrogen Peroxide", "Water", "Hydroxide", "Hydrate"}, 2},
+            {"Which element has the chemical symbol 'Au'?", {"Silver", "Gold", "Aluminum", "Argon"}, 2},
+            {"What is the pH of pure water?", {"5", "6", "7", "8"}, 3},
+            {"Which process converts liquid to gas?", {"Condensation", "Evaporation", "Sublimation", "Freezing"}, 2},
+            {"What is the lightest element?", {"Helium", "Hydrogen", "Lithium", "Oxygen"}, 2},
+            {"Which gas do plants absorb during photosynthesis?", 
+             {"Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"}, 2},
+            {"What is the main component of natural gas?", {"Propane", "Butane", "Methane", "Ethane"}, 3},
+            {"Which metal is liquid at room temperature?", {"Gallium", "Mercury", "Sodium", "Potassium"}, 2}
+        };
+        subjectQuizzes["Chemistry"] = chemistryQuiz;
+        
+        // English Quiz
+        vector<QuizQuestion> englishQuiz = {
+            {"Which word is a noun?", {"Run", "Beautiful", "Quickly", "House"}, 4},
+            {"What is the past tense of 'go'?", {"Goed", "Went", "Gone", "Going"}, 2},
+            {"Which sentence is correct?", 
+             {"She don't like apples", "She doesn't likes apples", 
+              "She doesn't like apples", "She not like apples"}, 3},
+            {"What is the synonym of 'happy'?", {"Sad", "Joyful", "Angry", "Tired"}, 2},
+            {"Which is a preposition?", {"And", "The", "In", "Quickly"}, 3},
+            {"What is the plural of 'child'?", {"Childs", "Children", "Childes", "Child's"}, 2},
+            {"Which word is spelled correctly?", {"Recieve", "Receive", "Recieve", "Receve"}, 2},
+            {"What is the opposite of 'ancient'?", {"Old", "Modern", "Historic", "Traditional"}, 2},
+            {"Which sentence is in passive voice?", 
+             {"The cat chased the mouse", "The mouse was chased by the cat", 
+              "Chasing the mouse, the cat", "The cat and the mouse"}, 2},
+            {"What type of word is 'quickly'?", {"Noun", "Verb", "Adjective", "Adverb"}, 4}
+        };
+        subjectQuizzes["English"] = englishQuiz;
+        
+        // Mathematics Quiz
+        vector<QuizQuestion> mathQuiz = {
+            {"What is 15 × 6?", {"80", "90", "100", "110"}, 2},
+            {"What is the value of π to two decimal places?", {"3.12", "3.14", "3.16", "3.18"}, 2},
+            {"Solve: 2x + 5 = 15", {"x = 5", "x = 10", "x = 7.5", "x = 5.5"}, 1},
+            {"What is the area of a rectangle with length 8 and width 5?", 
+             {"13", "26", "40", "35"}, 3},
+            {"What is 3/4 as a percentage?", {"25%", "50%", "75%", "100%"}, 3},
+            {"What is the square root of 144?", {"11", "12", "13", "14"}, 2},
+            {"How many degrees in a right angle?", {"45", "90", "180", "360"}, 2},
+            {"What is 7² + 8²?", {"49", "64", "113", "15"}, 3},
+            {"If a triangle has angles 60° and 70°, what is the third angle?", 
+             {"40°", "50°", "60°", "70°"}, 2},
+            {"What is the next number: 2, 4, 8, 16, ?", {"24", "28", "32", "36"}, 3}
+        };
+        subjectQuizzes["Mathematics"] = mathQuiz;
+        
+        // Biology Quiz
+        vector<QuizQuestion> biologyQuiz = {
+            {"What is the powerhouse of the cell?", 
+             {"Nucleus", "Mitochondria", "Ribosome", "Cell Membrane"}, 2},
+            {"How many bones are in the adult human body?", {"156", "206", "256", "306"}, 2},
+            {"Which blood type is the universal donor?", {"A", "B", "AB", "O"}, 4},
+            {"What gas do humans breathe out?", {"Oxygen", "Carbon Dioxide", "Nitrogen", "Helium"}, 2},
+            {"Which organ pumps blood throughout the body?", {"Lung", "Liver", "Heart", "Kidney"}, 3},
+            {"What is the study of living organisms called?", {"Geology", "Biology", "Chemistry", "Physics"}, 2},
+            {"Which is not a type of blood cell?", {"Red blood cell", "White blood cell", "Platelet", "Neuron"}, 4},
+            {"What is the largest organ in the human body?", {"Liver", "Heart", "Skin", "Brain"}, 3},
+            {"Which part of the plant conducts photosynthesis?", {"Root", "Stem", "Leaf", "Flower"}, 3},
+            {"How many chambers does the human heart have?", {"2", "3", "4", "5"}, 3}
+        };
+        subjectQuizzes["Biology"] = biologyQuiz;
+    }
+};
+
+class LearningResources {
+public:
+    void showResources() {
+        while (true) {
+            Utility::printHeader("LEARNING RESOURCES");
+            cout << "1. Khan Academy - Free online courses\n";
+            cout << "2. Coursera - University courses\n";
+            cout << "3. edX - Online learning platform\n";
+            cout << "4. YouTube Education - Video tutorials\n";
+            cout << "5. Physics Simulations (Open main.html)\n";
+            cout << "6. Back to Main Menu\n\n";
+            
+            cout << "Choice: ";
+            string input;
+            getline(cin, input);
+            
+            if (Utility::checkExit() || input.empty()) return;
+            
+            try {
                 int choice = stoi(input);
-                
                 switch (choice) {
-                    case 1:
-                        openYouTubeChannels();
-                        break;
-                    case 2:
+                    case 1: 
                         system("start https://www.khanacademy.org");
+                        Utility::printInfo("Opening Khan Academy...");
+                        Sleep(1000);
                         break;
-                    case 3:
+                    case 2: 
                         system("start https://www.coursera.org");
+                        Utility::printInfo("Opening Coursera...");
+                        Sleep(1000);
                         break;
-                    case 4:
+                    case 3: 
                         system("start https://www.edx.org");
+                        Utility::printInfo("Opening edX...");
+                        Sleep(1000);
+                        break;
+                    case 4: 
+                        system("start https://www.youtube.com/education");
+                        Utility::printInfo("Opening YouTube Education...");
+                        Sleep(1000);
                         break;
                     case 5:
-                        system("start https://www.youtube.com/c/crashcourse");
+                        openPhysicsSimulations();
                         break;
-                    case 6:
-                        system("start https://ocw.mit.edu");
-                        break;
-                    case 7:
-                        system("start https://ed.ted.com");
-                        break;
-                    case 8:
-                        system("start https://www.physicsclassroom.com");
-                        break;
-                    case 9:
-                        system("start https://www.wolframalpha.com");
-                        break;
-                    case 10:
+                    case 6: 
                         return;
-                    default:
+                    default: 
                         Utility::printError("Invalid choice!");
                 }
             } catch (...) {
@@ -1247,71 +1394,40 @@ public:
     }
     
 private:
-    void initializeResources() {
-        // Create resource files with links
-        ofstream ytFile(RESOURCES_DIR + "youtube_channels.txt");
-        if (ytFile.is_open()) {
-            ytFile << "Top Educational YouTube Channels:\n\n";
-            ytFile << "1. Crash Course - Comprehensive courses on various subjects\n";
-            ytFile << "   https://www.youtube.com/c/crashcourse\n\n";
-            ytFile << "2. Khan Academy - Free lessons on math, science, and more\n";
-            ytFile << "   https://www.youtube.com/c/khanacademy\n\n";
-            ytFile << "3. Numberphile - Mathematics videos\n";
-            ytFile << "   https://www.youtube.com/user/numberphile\n\n";
-            ytFile << "4. Physics Girl - Physics demonstrations and explanations\n";
-            ytFile << "   https://www.youtube.com/c/physicswoman\n\n";
-            ytFile << "5. Veritasium - Science education channel\n";
-            ytFile << "   https://www.youtube.com/c/veritasium\n\n";
-            ytFile << "6. 3Blue1Brown - Animated math explanations\n";
-            ytFile << "   https://www.youtube.com/c/3blue1brown\n\n";
-            ytFile << "7. SciShow - Answers to science questions\n";
-            ytFile << "   https://www.youtube.com/c/scishow\n\n";
-            ytFile << "8. TED-Ed - Educational animations\n";
-            ytFile << "   https://www.youtube.com/c/TEDEducation\n\n";
-            ytFile << "9. SmarterEveryDay - Science and engineering\n";
-            ytFile << "   https://www.youtube.com/c/smartereveryday\n\n";
-            ytFile << "10. MIT OpenCourseWare - University lectures\n";
-            ytFile << "    https://www.youtube.com/c/mitocw\n";
-            ytFile.close();
-        }
-    }
-    
-    void openYouTubeChannels() {
-        Utility::printHeader("YOUTUBE EDUCATIONAL CHANNELS");
+    void openPhysicsSimulations() {
+        string htmlFile = "main.html";
         
-        ifstream file(RESOURCES_DIR + "youtube_channels.txt");
-        if (file.is_open()) {
-            string line;
-            while (getline(file, line)) {
-                cout << line << "\n";
-            }
-            file.close();
-        }
-        
-        cout << "\nPress Enter to open these channels in browser...";
-        cin.get();
-        
-        // Open multiple educational channels
-        string channels[] = {
-            "https://www.youtube.com/c/crashcourse",
-            "https://www.youtube.com/c/khanacademy",
-            "https://www.youtube.com/c/veritasium",
-            "https://www.youtube.com/c/3blue1brown",
-            "https://www.youtube.com/c/TEDEducation"
-        };
-        
-        for (const auto& channel : channels) {
-            string command = "start " + channel;
+        if (Utility::fileExists(htmlFile)) {
+            string command = "start \"\" \"" + htmlFile + "\"";
             system(command.c_str());
-            Sleep(100); // Small delay between openings
+            Utility::printSuccess("Opening Physics Simulations in browser...");
+        } else {
+            Utility::printError("main.html file not found!");
+            Utility::printInfo("Please make sure main.html is in the same directory.");
+            Utility::printInfo("Creating a simple HTML file instead...");
+            
+            // Create a basic HTML file if main.html doesn't exist
+            ofstream file(htmlFile);
+            file << "<!DOCTYPE html>\n";
+            file << "<html>\n";
+            file << "<head><title>Physics Simulations</title></head>\n";
+            file << "<body>\n";
+            file << "<h1>Physics Simulations</h1>\n";
+            file << "<p>This is the physics simulations page.</p>\n";
+            file << "<p>Replace this file with your actual main.html file.</p>\n";
+            file << "</body>\n";
+            file << "</html>\n";
+            file.close();
+            
+            string command = "start \"\" \"" + htmlFile + "\"";
+            system(command.c_str());
+            Utility::printInfo("Created and opened a basic HTML file.");
         }
         
-        Utility::printInfo("Opening educational channels in browser...");
-        Sleep(2000); // Wait a bit before returning
+        Utility::pauseScreen();
     }
 };
 
-// ========== ADMIN PANEL CLASS ==========
 class AdminPanel {
 private:
     UserManager* userManager;
@@ -1322,70 +1438,28 @@ public:
     AdminPanel(UserManager* um, NotesManager* nm, TypingTestManager* ttm)
         : userManager(um), notesManager(nm), typingManager(ttm) {}
     
-    void showAdminMenu(User* admin) {
+    void showMenu(User* admin) {
         while (true) {
             Utility::printHeader("ADMIN PANEL");
-            
-            admin->displayInfo();
-            
-            cout << "\nADMIN OPTIONS:\n";
-            cout << "═══════════════════════════════════════════════════\n";
-            cout << "1. View All Users\n";
+            cout << "1. View Users\n";
             cout << "2. Delete User\n";
-            cout << "3. Add Notes\n";
-            cout << "4. Update Notes\n";
-            cout << "5. Delete Notes\n";
-            cout << "6. Update Typing Content\n";
-            cout << "7. Delete Typing Content\n";
-            cout << "8. Add Admin User\n";
-            cout << "9. View Statistics\n";
-            cout << "10. Back to Main Menu\n";
-            cout << "═══════════════════════════════════════════════════\n\n";
+            cout << "3. Manage Notes\n";
+            cout << "4. Back\n\n";
             
             cout << "Choice: ";
             string input;
             getline(cin, input);
             
-            if (Utility::checkExit() || input.empty()) {
-                return;
-            }
+            if (Utility::checkExit() || input.empty()) return;
             
             try {
                 int choice = stoi(input);
-                
                 switch (choice) {
-                    case 1:
-                        userManager->displayAllUsers();
-                        Utility::pauseScreen();
-                        break;
-                    case 2:
-                        deleteUser();
-                        break;
-                    case 3:
-                        notesManager->uploadNote();
-                        break;
-                    case 4:
-                        notesManager->updateNote();
-                        break;
-                    case 5:
-                        notesManager->deleteNote();
-                        break;
-                    case 6:
-                        updateTypingContent();
-                        break;
-                    case 7:
-                        deleteTypingContent();
-                        break;
-                    case 8:
-                        addAdminUser();
-                        break;
-                    case 9:
-                        showStatistics();
-                        break;
-                    case 10:
-                        return;
-                    default:
-                        Utility::printError("Invalid choice!");
+                    case 1: userManager->displayAllUsers(); Utility::pauseScreen(); break;
+                    case 2: deleteUser(); break;
+                    case 3: manageNotes(); break;
+                    case 4: return;
+                    default: Utility::printError("Invalid choice!");
                 }
             } catch (...) {
                 Utility::printError("Invalid input!");
@@ -1398,22 +1472,20 @@ private:
         Utility::printHeader("DELETE USER");
         userManager->displayAllUsers();
         
-        cout << "\nEnter username to delete: ";
+        cout << "\nUsername to delete: ";
         string username;
         getline(cin, username);
         
-        if (username.empty() || Utility::checkExit()) {
-            return;
-        }
+        if (username.empty()) return;
         
         if (userManager->userExists(username)) {
-            cout << "Are you sure you want to delete user '" << username << "'? (y/n): ";
+            cout << "Confirm delete '" << username << "'? (y/n): ";
             string confirm;
             getline(cin, confirm);
             
             if (Utility::toLower(confirm) == "y") {
                 userManager->deleteUser(username);
-                Utility::printSuccess("User deleted successfully!");
+                Utility::printSuccess("User deleted!");
             }
         } else {
             Utility::printError("User not found!");
@@ -1422,152 +1494,49 @@ private:
         Utility::pauseScreen();
     }
     
-    void updateTypingContent() {
-        Utility::printHeader("UPDATE TYPING CONTENT");
+    void manageNotes() {
+        NotesManager nm;
+        Utility::printHeader("MANAGE NOTES");
+        cout << "1. Upload Notes\n";
+        cout << "2. Update Notes\n";
+        cout << "3. Delete Notes\n";
+        cout << "4. Back\n\n";
         
-        auto subjects = typingManager->getSubjects();
-        for (size_t i = 0; i < subjects.size(); i++) {
-            cout << i + 1 << ". " << subjects[i] << "\n";
-        }
-        
-        cout << "\nSelect subject: ";
+        cout << "Choice: ";
         string input;
         getline(cin, input);
         
-        if (input.empty() || Utility::checkExit()) {
-            return;
-        }
+        if (Utility::checkExit() || input.empty()) return;
         
         try {
             int choice = stoi(input);
-            if (choice >= 1 && choice <= subjects.size()) {
-                typingManager->updateTypingContent(subjects[choice - 1]);
-                Utility::pauseScreen();
+            switch (choice) {
+                case 1: nm.uploadNote(); break;
+                case 2: nm.updateNote(); break;
+                case 3: nm.deleteNote(); break;
+                case 4: return;
+                default: Utility::printError("Invalid choice!");
             }
         } catch (...) {
             Utility::printError("Invalid input!");
-            Utility::pauseScreen();
         }
-    }
-    
-    void deleteTypingContent() {
-        Utility::printHeader("DELETE TYPING CONTENT");
-        
-        auto subjects = typingManager->getSubjects();
-        for (size_t i = 0; i < subjects.size(); i++) {
-            cout << i + 1 << ". " << subjects[i] << "\n";
-        }
-        
-        cout << "\nSelect subject: ";
-        string input;
-        getline(cin, input);
-        
-        if (input.empty() || Utility::checkExit()) {
-            return;
-        }
-        
-        try {
-            int choice = stoi(input);
-            if (choice >= 1 && choice <= subjects.size()) {
-                typingManager->deleteTypingContent(subjects[choice - 1]);
-                Utility::pauseScreen();
-            }
-        } catch (...) {
-            Utility::printError("Invalid input!");
-            Utility::pauseScreen();
-        }
-    }
-    
-    void addAdminUser() {
-        Utility::printHeader("ADD ADMIN USER");
-        
-        cout << "Enter new admin username: ";
-        string username;
-        getline(cin, username);
-        
-        if (username.empty() || Utility::checkExit()) {
-            return;
-        }
-        
-        if (userManager->userExists(username)) {
-            Utility::printError("Username already exists!");
-            Utility::pauseScreen();
-            return;
-        }
-        
-        cout << "Enter password: ";
-        string password = Utility::getPasswordInput();
-        cout << "\n";
-        
-        if (password.empty()) {
-            Utility::printError("Password cannot be empty!");
-            Utility::pauseScreen();
-            return;
-        }
-        
-        cout << "Confirm password: ";
-        string confirmPass = Utility::getPasswordInput();
-        cout << "\n";
-        
-        if (password != confirmPass) {
-            Utility::printError("Passwords don't match!");
-            Utility::pauseScreen();
-            return;
-        }
-        
-        if (userManager->registerUser(username, password, "admin")) {
-            Utility::printSuccess("Admin user created successfully!");
-        } else {
-            Utility::printError("Failed to create admin user!");
-        }
-        
-        Utility::pauseScreen();
-    }
-    
-    void showStatistics() {
-        Utility::printHeader("SYSTEM STATISTICS");
-        
-        cout << "Users Statistics:\n";
-        cout << "─────────────────────────────────────\n";
-        cout << "Total Users: " << userManager->getUserCount() << "\n";
-        
-        // Note: In a real system, you would track more statistics
-        cout << "\nSystem Status:\n";
-        cout << "─────────────────────────────────────\n";
-        cout << "Notes Module: ✓ Active\n";
-        cout << "Typing Test:  ✓ Active\n";
-        cout << "Resources:    ✓ Active\n";
-        cout << "Admin Panel:  ✓ Active\n";
-        
-        cout << "\nStorage Information:\n";
-        cout << "─────────────────────────────────────\n";
-        cout << "Notes Directory: notes/\n";
-        cout << "Typing Content: typing_content/\n";
-        cout << "User Data: users.txt, admin.txt\n";
-        
-        Utility::pauseScreen();
     }
 };
 
-// ========== MAIN APPLICATION CLASS ==========
-class EduQuestApp {
+class EdutainmentApp {
 private:
     UserManager userManager;
     NotesManager notesManager;
     TypingTestManager typingManager;
+    QuizManager quizManager;
     LearningResources resources;
+    AdminPanel adminPanel;
     User* currentUser;
-    AdminPanel* adminPanel;
     
 public:
-    EduQuestApp() : currentUser(nullptr) {
-        adminPanel = new AdminPanel(&userManager, &notesManager, &typingManager);
+    EdutainmentApp() : adminPanel(&userManager, &notesManager, &typingManager), currentUser(nullptr) {
         Utility::init();
-        setupDefaultAdmin();
-    }
-    
-    ~EduQuestApp() {
-        delete adminPanel;
+        setupAdmin();
     }
     
     void run() {
@@ -1577,103 +1546,75 @@ public:
     }
     
 private:
-    void setupDefaultAdmin() {
-        // Create default admin if not exists
+    void setupAdmin() {
         if (!userManager.userExists("admin")) {
             userManager.registerUser("admin", "admin123", "admin");
-            Utility::printInfo("Default admin created: admin/admin123");
         }
     }
     
     void showMainMenu() {
-        Utility::printHeader("EDUQUEST - EDUCATION & TYPING SYSTEM");
+        Utility::printHeader("EDU-TAINMENT SYSTEM");
         
         if (currentUser) {
             currentUser->displayInfo();
-        } else {
-            Utility::setColor(COLOR_YELLOW);
-            cout << "Not logged in. Please login or register.\n";
-            Utility::setColor(COLOR_RESET);
-        }
-        
-        cout << "\nMAIN MENU:\n";
-        cout << "═══════════════════════════════════════════════════\n";
-        cout << "1. Login\n";
-        cout << "2. Register\n";
-        if (currentUser) {
-            cout << "3. View Study Notes\n";
-            cout << "4. Typing Test Challenge\n";
-            cout << "5. Learning Resources\n";
+            cout << "\n1. Study Notes\n";
+            cout << "2. Typing Challenge\n";
+            cout << "3. Subject Quizzes\n";
+            cout << "4. Learning Resources\n";
             if (currentUser->getRole() == "admin") {
-                cout << "6. Admin Panel\n";
+                cout << "5. Admin Panel\n";
+                cout << "6. Logout\n";
+                cout << "7. Exit\n";
+            } else {
+                cout << "5. Logout\n";
+                cout << "6. Exit\n";
             }
-            cout << "7. Logout\n";
-            cout << "8. Exit\n";
         } else {
+            cout << "1. Login\n";
+            cout << "2. Register\n";
             cout << "3. Exit\n";
         }
-        cout << "═══════════════════════════════════════════════════\n\n";
         
-        cout << "Choice: ";
+        cout << "\nChoice: ";
         string input;
         getline(cin, input);
         
-        if (input.empty()) {
-            return;
-        }
+        if (input.empty()) return;
         
         try {
             int choice = stoi(input);
             
             if (!currentUser) {
-                // Not logged in
                 switch (choice) {
-                    case 1:
-                        login();
-                        break;
-                    case 2:
-                        registerUser();
-                        break;
-                    case 3:
-                        exitApp();
-                        break;
-                    default:
-                        Utility::printError("Invalid choice!");
+                    case 1: login(); break;
+                    case 2: registerUser(); break;
+                    case 3: exit(0); break;
                 }
             } else {
-                // Logged in
                 switch (choice) {
-                    case 1:
-                        // Already logged in
-                        break;
-                    case 2:
-                        // Already registered
-                        break;
-                    case 3:
-                        notesManager.viewNotes();
-                        break;
-                    case 4:
-                        typingManager.showTypingTestMenu();
-                        break;
-                    case 5:
-                        resources.showResourcesMenu();
-                        break;
-                    case 6:
+                    case 1: notesManager.viewNotes(); break;
+                    case 2: typingManager.showTypingMenu(currentUser); break;
+                    case 3: quizManager.showQuizMenu(currentUser); break;
+                    case 4: resources.showResources(); break;
+                    case 5: 
                         if (currentUser->getRole() == "admin") {
-                            adminPanel->showAdminMenu(currentUser);
+                            adminPanel.showMenu(currentUser);
                         } else {
-                            Utility::printError("Access denied!");
-                            Utility::pauseScreen();
+                            logout();
                         }
                         break;
-                    case 7:
-                        logout();
+                    case 6: 
+                        if (currentUser->getRole() == "admin") {
+                            logout();
+                        } else {
+                            exit(0);
+                        }
                         break;
-                    case 8:
-                        exitApp();
+                    case 7: 
+                        if (currentUser->getRole() == "admin") {
+                            exit(0);
+                        }
                         break;
-                    default:
-                        Utility::printError("Invalid choice!");
                 }
             }
         } catch (...) {
@@ -1683,47 +1624,37 @@ private:
     
     void login() {
         Utility::printHeader("LOGIN");
-        
         cout << "Username: ";
         string username;
         getline(cin, username);
         
-        if (username.empty() || Utility::checkExit()) {
-            return;
-        }
+        if (username.empty()) return;
         
         cout << "Password: ";
         string password = Utility::getPasswordInput();
         cout << "\n";
         
-        if (password.empty()) {
-            return;
-        }
-        
         currentUser = userManager.login(username, password);
         
         if (currentUser) {
             Utility::printSuccess("Login successful!");
-            Utility::pauseScreen("Press Enter to continue...");
+            Utility::pauseScreen();
         } else {
-            Utility::printError("Invalid username or password!");
+            Utility::printError("Invalid credentials!");
             Utility::pauseScreen();
         }
     }
     
     void registerUser() {
         Utility::printHeader("REGISTER");
-        
         cout << "Username: ";
         string username;
         getline(cin, username);
         
-        if (username.empty() || Utility::checkExit()) {
-            return;
-        }
+        if (username.empty()) return;
         
         if (userManager.userExists(username)) {
-            Utility::printError("Username already exists!");
+            Utility::printError("Username taken!");
             Utility::pauseScreen();
             return;
         }
@@ -1733,25 +1664,25 @@ private:
         cout << "\n";
         
         if (password.empty()) {
-            Utility::printError("Password cannot be empty!");
+            Utility::printError("Password required!");
             Utility::pauseScreen();
             return;
         }
         
-        cout << "Confirm password: ";
-        string confirmPass = Utility::getPasswordInput();
+        cout << "Confirm: ";
+        string confirm = Utility::getPasswordInput();
         cout << "\n";
         
-        if (password != confirmPass) {
-            Utility::printError("Passwords don't match!");
+        if (password != confirm) {
+            Utility::printError("Mismatch!");
             Utility::pauseScreen();
             return;
         }
         
         if (userManager.registerUser(username, password)) {
-            Utility::printSuccess("Registration successful! Please login.");
+            Utility::printSuccess("Registered!");
         } else {
-            Utility::printError("Registration failed!");
+            Utility::printError("Failed!");
         }
         
         Utility::pauseScreen();
@@ -1759,33 +1690,20 @@ private:
     
     void logout() {
         if (currentUser) {
-            // Save user data before logout
             userManager.updateUser(*currentUser);
-            Utility::printSuccess("Logged out successfully!");
             currentUser = nullptr;
+            Utility::printSuccess("Logged out!");
             Utility::pauseScreen();
         }
     }
-    
-    void exitApp() {
-        Utility::printHeader("EXIT");
-        cout << "Thank you for using EduQuest!\n";
-        cout << "Goodbye!\n";
-        exit(0);
-    }
 };
 
-// ========== MAIN FUNCTION ==========
 int main() {
-    // Set console title
-    system("title EduQuest - Education & Typing System");
-    
-    // Enable UTF-8 support for Windows
+    system("title Edu-Tainment System");
     system("chcp 65001 >nul");
     
-    EduQuestApp app;
+    EdutainmentApp app;
     app.run();
     
     return 0;
 }
-        

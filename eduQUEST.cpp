@@ -10,8 +10,11 @@
 #include <algorithm>
 #include <sstream>
 #include <map>
+#include <chrono>
+#include <thread>
 
 using namespace std;
+using namespace std::chrono;
 
 const int COLOR_RESET = 7;
 const int COLOR_RED = 12;
@@ -32,6 +35,11 @@ private:
 public:
     static void init() {
         hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        DWORD mode = 0;
+        if (GetConsoleMode(hConsole, &mode)) {
+            mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+            SetConsoleMode(hConsole, mode);
+        }
     }
     
     static void setColor(int color) {
@@ -40,6 +48,31 @@ public:
     
     static void clearScreen() {
         system("cls");
+    }
+    
+    static void clearScreenNoFlicker() {
+        cout << "\x1b[2J\x1b[H";
+    }
+    
+    static void setCursorPosition(int x, int y) {
+        COORD coord;
+        coord.X = x;
+        coord.Y = y;
+        SetConsoleCursorPosition(hConsole, coord);
+    }
+    
+    static void hideCursor() {
+        CONSOLE_CURSOR_INFO cursorInfo;
+        GetConsoleCursorInfo(hConsole, &cursorInfo);
+        cursorInfo.bVisible = false;
+        SetConsoleCursorInfo(hConsole, &cursorInfo);
+    }
+    
+    static void showCursor() {
+        CONSOLE_CURSOR_INFO cursorInfo;
+        GetConsoleCursorInfo(hConsole, &cursorInfo);
+        cursorInfo.bVisible = true;
+        SetConsoleCursorInfo(hConsole, &cursorInfo);
     }
     
     static void pauseScreen(const string& message = "Press Enter to continue...") {
@@ -101,7 +134,7 @@ public:
     }
     
     static void printHeader(const string& title) {
-        clearScreen();
+        clearScreenNoFlicker();
         setColor(COLOR_PURPLE);
         cout << "========================================\n";
         cout << "           " << title << "\n";
@@ -144,6 +177,21 @@ public:
         string result = str;
         transform(result.begin(), result.end(), result.begin(), ::tolower);
         return result;
+    }
+    
+    // Utility functions from the provided code
+    static void clearInputBuffer() {
+        cin.clear();
+        cin.ignore(256, '\n');
+    }
+    
+    static bool isCharInString(const string& str, char c) {
+        for (size_t i = 0; i < str.length(); ++i) {
+            if (str[i] == c) {
+                return true;
+            }
+        }
+        return false;
     }
 };
 
@@ -323,6 +371,429 @@ private:
     }
 };
 
+// ====================================================
+// NEW: Mini-Games Manager (Integrates provided code)
+// ====================================================
+
+class MiniGamesManager {
+private:
+    // High score system for math quiz
+    void updateHighScore(int newScore, const int totalQuestions, User* user = nullptr) {
+        int highScore = 0;
+        
+        // Load existing high score
+        ifstream inFile("math_highscore.txt");
+        if (inFile.is_open()) {
+            inFile >> highScore;
+            inFile.close();
+        } 
+
+        Utility::setColor(COLOR_YELLOW);
+        cout << "\n--- Math Quiz High Score Board ---\n";
+        Utility::setColor(COLOR_RESET);
+        cout << "Previous High Score: " << highScore << " out of " << totalQuestions << endl;
+
+        // Compare and update
+        if (newScore > highScore) {
+            highScore = newScore;
+            
+            // Save new high score
+            ofstream outFile("math_highscore.txt");
+            if (outFile.is_open()) {
+                outFile << highScore;
+                outFile.close();
+                Utility::setColor(COLOR_GREEN);
+                cout << "NEW HIGH SCORE! " << newScore << " out of " << totalQuestions << " SAVED!\n";
+            } else {
+                Utility::setColor(COLOR_RED);
+                cout << "Warning: Could not save the new high score to file.\n";
+            }
+            Utility::setColor(COLOR_RESET);
+            
+            // Award bonus points to user
+            if (user && newScore > 0) {
+                int bonusPoints = newScore * 10;
+                user->addPoints(bonusPoints);
+                Utility::setColor(COLOR_CYAN);
+                cout << "Bonus points earned: " << bonusPoints << "!\n";
+                Utility::setColor(COLOR_RESET);
+            }
+        } else {
+            cout << "Your score: " << newScore << ". Keep practicing to beat the high score!\n";
+            if (user) {
+                int points = newScore * 5;
+                user->addPoints(points);
+                cout << "Points earned: " << points << "\n";
+            }
+        }
+    }
+
+    int getDifficultyChoice() {
+        int choice;
+        Utility::setColor(COLOR_CYAN);
+        cout << "\nChoose a Difficulty Level:\n";
+        Utility::setColor(COLOR_RESET);
+        cout << "1. Easy (Numbers 1-10, Add/Subtract)\n";
+        cout << "2. Medium (Numbers 1-50, Add/Subtract)\n";
+        cout << "3. Hard (Numbers 1-10, Includes Multiply/Divide)\n";
+        cout << "Enter your choice (1, 2, or 3): ";
+
+        while (!(cin >> choice) || choice < 1 || choice > 3) {
+            Utility::setColor(COLOR_RED);
+            cout << "Invalid choice! Please enter 1, 2, or 3: ";
+            Utility::setColor(COLOR_RESET);
+            Utility::clearInputBuffer();
+        }
+        return choice;
+    }
+
+    void runMathQuestion(int& score, int difficulty) {
+        int max_operand;
+        int operation = rand() % (difficulty == 3 ? 4 : 2);
+
+        switch (difficulty) {
+            case 1: max_operand = 10; break;
+            case 2: max_operand = 50; break;
+            case 3: max_operand = 10; break;
+            default: max_operand = 10;
+        }
+
+        int num1, num2;
+        int correctAnswer;
+        char operationSymbol;
+
+        if (operation == 0) {
+            // Addition
+            num1 = rand() % max_operand + 1;
+            num2 = rand() % max_operand + 1;
+            correctAnswer = num1 + num2;
+            operationSymbol = '+';
+        } else if (operation == 1) {
+            // Subtraction
+            num1 = rand() % max_operand + 1;
+            num2 = rand() % max_operand + 1;
+            if (num1 < num2) {
+                int temp = num1; num1 = num2; num2 = temp;
+            }
+            correctAnswer = num1 - num2;
+            operationSymbol = '-';
+        } else if (operation == 2) {
+            // Multiplication
+            num1 = rand() % max_operand + 1;
+            num2 = rand() % max_operand + 1;
+            correctAnswer = num1 * num2;
+            operationSymbol = '*';
+        } else { // Division
+            operationSymbol = '/';
+            int divisor = rand() % 9 + 2;
+            int quotient = rand() % 9 + 1;
+            num1 = divisor * quotient;
+            num2 = divisor;
+            correctAnswer = quotient;
+        }
+
+        Utility::setColor(COLOR_WHITE);
+        cout << "\nWhat is " << num1 << " " << operationSymbol << " " << num2 << "? ";
+        Utility::setColor(COLOR_RESET);
+        
+        int userAnswer;
+        while (!(cin >> userAnswer)) {
+            Utility::setColor(COLOR_RED);
+            cout << "Invalid input! Please enter a number: ";
+            Utility::setColor(COLOR_RESET);
+            Utility::clearInputBuffer();
+        }
+
+        if (userAnswer == correctAnswer) {
+            Utility::setColor(COLOR_GREEN);
+            cout << "✓ Correct! Great job!\n";
+            Utility::setColor(COLOR_RESET);
+            score++;
+        } else {
+            Utility::setColor(COLOR_RED);
+            cout << "✗ Incorrect. The correct answer is " << correctAnswer << ".\n";
+            Utility::setColor(COLOR_RESET);
+        }
+    }
+
+public:
+    void showMiniGamesMenu(User* user) {
+        while (true) {
+            Utility::printHeader("MINI-GAMES COLLECTION");
+            cout << "1. Math Practice Quiz\n";
+            cout << "2. Number Guessing Game\n";
+            cout << "3. Science Fact Learner\n";
+            cout << "4. Word Guessing Game\n";
+            cout << "5. Back to Main Menu\n\n";
+            
+            cout << "Choice: ";
+            string input;
+            getline(cin, input);
+            
+            if (Utility::checkExit() || input.empty()) return;
+            
+            try {
+                int choice = stoi(input);
+                switch (choice) {
+                    case 1: mathQuizMode(user); break;
+                    case 2: guessingGameMode(user); break;
+                    case 3: factLearnerMode(user); break;
+                    case 4: wordGuessingGameMode(user); break;
+                    case 5: return;
+                    default: Utility::printError("Invalid choice!");
+                }
+            } catch (...) {
+                Utility::printError("Invalid input!");
+            }
+        }
+    }
+
+    void mathQuizMode(User* user) {
+        Utility::printHeader("MATH PRACTICE QUIZ");
+        srand(static_cast<unsigned int>(time(nullptr)));
+        
+        int selectedDifficulty = getDifficultyChoice();
+        int score = 0;
+        const int totalQuestions = 5;
+
+        Utility::setColor(COLOR_CYAN);
+        cout << "\nStarting " << totalQuestions << " questions...\n";
+        Utility::setColor(COLOR_RESET);
+
+        for (int i = 0; i < totalQuestions; ++i) {
+            Utility::setColor(COLOR_YELLOW);
+            cout << "\n--- Question " << i + 1 << " of " << totalQuestions << " ---\n";
+            Utility::setColor(COLOR_RESET);
+            runMathQuestion(score, selectedDifficulty);
+        }
+
+        Utility::setColor(COLOR_PURPLE);
+        cout << "\n*** Quiz Finished! Score: " << score << "/" << totalQuestions << " ***\n";
+        Utility::setColor(COLOR_RESET);
+        
+        updateHighScore(score, totalQuestions, user);
+        Utility::pauseScreen();
+    }
+
+    void guessingGameMode(User* user) {
+        Utility::printHeader("NUMBER GUESSING GAME");
+        srand(static_cast<unsigned int>(time(nullptr)));
+        
+        int secretNumber = rand() % 50 + 1;
+        int guess;
+        int tries = 0;
+        const int maxTries = 7;
+
+        Utility::setColor(COLOR_CYAN);
+        cout << "I'm thinking of a number between 1 and 50.\n";
+        cout << "You have " << maxTries << " tries.\n";
+        Utility::setColor(COLOR_RESET);
+
+        while (tries < maxTries) {
+            Utility::setColor(COLOR_WHITE);
+            cout << "\nEnter your guess (" << maxTries - tries << " tries left): ";
+            Utility::setColor(COLOR_RESET);
+            
+            if (!(cin >> guess)) {
+                Utility::setColor(COLOR_RED);
+                cout << "Invalid input! Please enter only a whole number.\n";
+                Utility::setColor(COLOR_RESET);
+                Utility::clearInputBuffer();
+                continue;
+            }
+
+            tries++;
+
+            if (guess > secretNumber) {
+                Utility::setColor(COLOR_BLUE);
+                cout << "Too high! The secret number is less than " << guess << ".\n";
+                Utility::setColor(COLOR_RESET);
+            } else if (guess < secretNumber) {
+                Utility::setColor(COLOR_BLUE);
+                cout << "Too low! The secret number is greater than " << guess << ".\n";
+                Utility::setColor(COLOR_RESET);
+            } else {
+                Utility::setColor(COLOR_GREEN);
+                cout << "\n🎉 Congratulations! You guessed the number " << secretNumber << " in " << tries << " tries!\n";
+                Utility::setColor(COLOR_RESET);
+                
+                if (user) {
+                    int points = (maxTries - tries + 1) * 10;
+                    user->addPoints(points);
+                    cout << "Points earned: " << points << "\n";
+                }
+                Utility::pauseScreen();
+                return;
+            }
+        }
+
+        Utility::setColor(COLOR_RED);
+        cout << "\n😢 You ran out of tries. The secret number was " << secretNumber << ".\n";
+        Utility::setColor(COLOR_RESET);
+        
+        if (user) {
+            int points = 5; // Participation points
+            user->addPoints(points);
+            cout << "Participation points earned: " << points << "\n";
+        }
+        Utility::pauseScreen();
+    }
+
+    void factLearnerMode(User* user) {
+        Utility::printHeader("SCIENCE FACT LEARNER");
+        
+        vector<string> facts = {
+            "Fact 1: The speed of light in a vacuum is approximately 299,792,458 m/s.",
+            "Fact 2: Photosynthesis is the process used by plants to convert light energy into chemical energy.",
+            "Fact 3: The Earth's core is primarily made of iron and nickel.",
+            "Fact 4: Water (H₂O) boils at 100°C (212°F) at sea level.",
+            "Fact 5: Humans have 46 chromosomes in total (23 pairs).",
+            "Fact 6: The human brain contains about 86 billion neurons.",
+            "Fact 7: DNA stands for Deoxyribonucleic Acid.",
+            "Fact 8: The Great Wall of China is visible from space with the naked eye (a common myth, but actually not true!).",
+            "Fact 9: Honey never spoils. Archaeologists have found pots of honey in ancient Egyptian tombs that are over 3,000 years old and still edible.",
+            "Fact 10: Octopuses have three hearts and blue blood."
+        };
+
+        Utility::setColor(COLOR_CYAN);
+        cout << "--- Daily Science Facts ---\n";
+        Utility::setColor(COLOR_RESET);
+        
+        for (size_t i = 0; i < facts.size(); ++i) {
+            Utility::setColor(COLOR_YELLOW);
+            cout << "* ";
+            Utility::setColor(COLOR_WHITE);
+            cout << facts[i] << "\n";
+            
+            if ((i + 1) % 3 == 0) {
+                cout << "\nPress Enter to continue... ";
+                if (Utility::checkExit()) return;
+                cin.get();
+            }
+        }
+
+        if (user) {
+            int points = 15;
+            user->addPoints(points);
+            Utility::setColor(COLOR_GREEN);
+            cout << "\nKnowledge points earned: " << points << "\n";
+            Utility::setColor(COLOR_RESET);
+        }
+        
+        Utility::pauseScreen("\nPress Enter to return to the menu...");
+    }
+
+    void wordGuessingGameMode(User* user) {
+        Utility::printHeader("WORD GUESSING GAME");
+        
+        vector<string> words = {"algorithm", "compiler", "variable", "function", "integer", "loop", "structure", "pointer", "recursion", "debugging"};
+        
+        srand(static_cast<unsigned int>(time(nullptr)));
+        int wordIndex = rand() % words.size();
+        string secretWord = words[wordIndex];
+        
+        string guessedWord(secretWord.length(), '_');
+        int maxIncorrectGuesses = 6;
+        int incorrectGuesses = 0;
+        string lettersGuessed = "";
+
+        Utility::setColor(COLOR_CYAN);
+        cout << "Guess the programming-related word!\n";
+        cout << "You have " << maxIncorrectGuesses << " incorrect guesses.\n";
+        Utility::setColor(COLOR_RESET);
+
+        while (incorrectGuesses < maxIncorrectGuesses && guessedWord != secretWord) {
+            cout << "\n══════════════════════════════════════\n";
+            Utility::setColor(COLOR_YELLOW);
+            cout << "Word: ";
+            for (char c : guessedWord) {
+                cout << c << " ";
+            }
+            cout << "\n";
+            Utility::setColor(COLOR_RESET);
+            
+            Utility::setColor(COLOR_RED);
+            cout << "Incorrect Guesses: " << incorrectGuesses << "/" << maxIncorrectGuesses << "\n";
+            Utility::setColor(COLOR_RESET);
+            
+            Utility::setColor(COLOR_CYAN);
+            cout << "Letters Guessed: " << (lettersGuessed.empty() ? "None" : lettersGuessed) << "\n";
+            Utility::setColor(COLOR_RESET);
+            
+            cout << "Enter a letter guess: ";
+
+            char guessChar;
+            cin >> guessChar;
+            
+            if (guessChar >= 'A' && guessChar <= 'Z') {
+                guessChar = guessChar + ('a' - 'A');
+            }
+
+            Utility::clearInputBuffer();
+
+            if (Utility::isCharInString(lettersGuessed, guessChar)) {
+                Utility::setColor(COLOR_YELLOW);
+                cout << "You already guessed '" << guessChar << "'. Try a new one.\n";
+                Utility::setColor(COLOR_RESET);
+                continue;
+            }
+            
+            if (guessChar < 'a' || guessChar > 'z') {
+                Utility::setColor(COLOR_RED);
+                cout << "Invalid input. Please enter a letter (a-z).\n";
+                Utility::setColor(COLOR_RESET);
+                continue;
+            }
+
+            lettersGuessed += guessChar;
+            lettersGuessed += ' ';
+
+            if (Utility::isCharInString(secretWord, guessChar)) {
+                Utility::setColor(COLOR_GREEN);
+                cout << "✓ Correct guess!\n";
+                Utility::setColor(COLOR_RESET);
+                
+                for (size_t i = 0; i < secretWord.length(); ++i) {
+                    if (secretWord[i] == guessChar) {
+                        guessedWord[i] = guessChar;
+                    }
+                }
+            } else {
+                Utility::setColor(COLOR_RED);
+                cout << "✗ Incorrect guess.\n";
+                Utility::setColor(COLOR_RESET);
+                incorrectGuesses++;
+            }
+        }
+
+        cout << "\n══════════════════════════════════════\n";
+        if (guessedWord == secretWord) {
+            Utility::setColor(COLOR_GREEN);
+            cout << "🎉 VICTORY! The word was: " << secretWord << "\n";
+            Utility::setColor(COLOR_RESET);
+            
+            if (user) {
+                int points = (maxIncorrectGuesses - incorrectGuesses) * 15;
+                user->addPoints(points);
+                cout << "Points earned: " << points << "\n";
+            }
+        } else {
+            Utility::setColor(COLOR_RED);
+            cout << "💀 GAME OVER! You ran out of guesses.\n";
+            cout << "The word was: " << secretWord << "\n";
+            Utility::setColor(COLOR_RESET);
+            
+            if (user) {
+                int points = 5;
+                user->addPoints(points);
+                cout << "Participation points: " << points << "\n";
+            }
+        }
+        Utility::pauseScreen();
+    }
+};
+
+// NotesManager class (unchanged from original)
 class NotesManager {
 private:
     const string NOTES_DIR = "notes/";
@@ -546,6 +1017,7 @@ private:
     }
 };
 
+// TypingTestManager class (smooth version from previous enhancement)
 class TypingTestManager {
 private:
     const string TYPING_DIR = "typing_content/";
@@ -560,15 +1032,39 @@ private:
         double accuracy;
     };
     
+    struct RenderBuffer {
+        vector<string> words;
+        string currentInput;
+        int currentIndex;
+        int timeLeft;
+        string subject;
+        int correctChars;
+        int totalChars;
+        double wpm;
+        double accuracy;
+        
+        RenderBuffer() : currentIndex(0), timeLeft(60), correctChars(0), totalChars(0), wpm(0), accuracy(100) {}
+    };
+    
+    RenderBuffer renderBuffer;
+    steady_clock::time_point lastRenderTime;
+    int renderIntervalMs;
+    
 public:
-    TypingTestManager() {
+    TypingTestManager() : renderIntervalMs(33) {
         Utility::createDirectory(TYPING_DIR);
         initializeDefaultContent();
     }
     
+    void setRenderFPS(int fps) {
+        if (fps > 0) {
+            renderIntervalMs = 1000 / fps;
+        }
+    }
+    
     void showTypingMenu(User* user) {
         while (true) {
-            Utility::clearScreen();
+            Utility::clearScreenNoFlicker();
             Utility::setColor(COLOR_PURPLE);
             cout << "================================================\n";
             cout << "          EDU-TAINMENT TYPING CHALLENGE        \n";
@@ -610,11 +1106,20 @@ public:
         }
         
         vector<string> words = splitIntoWords(content);
-        
         showInstructions();
         
         cout << "\nPress ENTER to start...";
         cin.get();
+        
+        renderBuffer.words = words;
+        renderBuffer.currentInput = "";
+        renderBuffer.currentIndex = 0;
+        renderBuffer.timeLeft = 60;
+        renderBuffer.subject = subject;
+        renderBuffer.correctChars = 0;
+        renderBuffer.totalChars = 0;
+        renderBuffer.wpm = 0;
+        renderBuffer.accuracy = 100;
         
         TypingResult result = startTest(words, subject);
         showResults(result, user);
@@ -648,7 +1153,7 @@ private:
     }
     
     void showInstructions() {
-        Utility::clearScreen();
+        Utility::clearScreenNoFlicker();
         Utility::setColor(COLOR_CYAN);
         cout << "================================================\n";
         cout << "                INSTRUCTIONS                   \n";
@@ -669,38 +1174,39 @@ private:
         int totalChars = 0;
         string currentInput = "";
         
-        time_t startTime = time(nullptr);
-        time_t endTime = startTime + 60;
+        auto startTime = steady_clock::now();
+        auto endTime = startTime + seconds(60);
         
-        // Initial display
-        Utility::clearScreen();
-        displayTestScreen(words, currentWord, currentInput, 60, subject, correctChars, totalChars, true);
+        lastRenderTime = steady_clock::now();
+        renderScreen(currentWord, words, currentInput, 60, subject, correctChars, totalChars, true);
+        
+        Utility::hideCursor();
         
         while (currentWord < min(150, (int)words.size())) {
-            time_t currentTime = time(nullptr);
-            int timeLeft = endTime - currentTime;
+            auto currentTime = steady_clock::now();
+            int timeLeft = duration_cast<seconds>(endTime - currentTime).count();
             
             if (timeLeft <= 0) break;
             
-            // Update only the changing parts
-            if (displayTestScreen(words, currentWord, currentInput, timeLeft, subject, correctChars, totalChars, false)) {
-                // Screen was redrawn
-            }
+            auto timeSinceLastRender = duration_cast<milliseconds>(currentTime - lastRenderTime).count();
+            bool inputChanged = false;
             
             if (_kbhit()) {
                 char ch = _getch();
                 
-                if (ch == 27) { // ESC
-                    return {currentWord, correctChars, totalChars, 
-                           difftime(currentTime, startTime), 0, 0};
+                if (ch == 27) {
+                    auto elapsed = duration_cast<milliseconds>(currentTime - startTime).count() / 1000.0;
+                    Utility::showCursor();
+                    return {currentWord, correctChars, totalChars, elapsed, 0, 0};
                 }
                 
-                if (ch == 8) { // Backspace
+                if (ch == 8) {
                     if (!currentInput.empty()) {
                         currentInput.pop_back();
+                        inputChanged = true;
                     }
                 }
-                else if (ch == 32) { // Space
+                else if (ch == 32) {
                     if (currentWord < words.size()) {
                         string target = words[currentWord];
                         totalChars += target.length() + 1;
@@ -709,7 +1215,6 @@ private:
                             correctChars += target.length();
                         }
                         else {
-                            // Count matching characters
                             int match = 0;
                             int len = min(currentInput.length(), target.length());
                             for (int i = 0; i < len; i++) {
@@ -720,50 +1225,46 @@ private:
                         
                         currentWord++;
                         currentInput = "";
+                        inputChanged = true;
                     }
                 }
                 else if (isprint(ch)) {
                     currentInput += ch;
+                    inputChanged = true;
                 }
             }
             
-            Sleep(10);
+            if (inputChanged || timeSinceLastRender >= renderIntervalMs) {
+                renderScreen(currentWord, words, currentInput, timeLeft, subject, correctChars, totalChars, false);
+                lastRenderTime = currentTime;
+            }
+            
+            this_thread::sleep_for(milliseconds(1));
         }
         
-        time_t finishTime = time(nullptr);
-        double timeTaken = difftime(finishTime, startTime);
+        auto finishTime = steady_clock::now();
+        double timeTaken = duration_cast<milliseconds>(finishTime - startTime).count() / 1000.0;
         double minutes = timeTaken / 60.0;
         double wpm = (minutes > 0) ? (currentWord / minutes) : 0;
         double accuracy = (totalChars > 0) ? (correctChars * 100.0 / totalChars) : 0;
         
+        Utility::showCursor();
+        
         return {currentWord, correctChars, totalChars, timeTaken, wpm, accuracy};
     }
     
-    bool displayTestScreen(const vector<string>& words, int currentIndex,
-                         const string& input, int timeLeft, const string& subject,
-                         int correctChars, int totalChars, bool initial = false) {
-        static int lastCurrentIndex = -1;
-        static string lastInput = "";
-        static int lastTimeLeft = -1;
-        
-        // Only redraw if something changed
-        if (!initial && currentIndex == lastCurrentIndex && 
-            input == lastInput && timeLeft == lastTimeLeft) {
-            return false;
-        }
-        
-        lastCurrentIndex = currentIndex;
-        lastInput = input;
-        lastTimeLeft = timeLeft;
-        
-        // Clear screen for initial display, otherwise update in place
+    void renderScreen(int currentIndex, const vector<string>& words, const string& input, 
+                      int timeLeft, const string& subject, int correctChars, int totalChars, bool initial) {
         if (initial) {
-            Utility::clearScreen();
-        } else {
-            // Move cursor to top
-            COORD cursorPos = {0, 0};
-            SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPos);
+            Utility::clearScreenNoFlicker();
         }
+        
+        double timeElapsed = 60 - timeLeft;
+        double minutesElapsed = timeElapsed / 60.0;
+        double wpm = (minutesElapsed > 0) ? (currentIndex / minutesElapsed) : 0;
+        double accuracy = (totalChars > 0) ? (correctChars * 100.0 / totalChars) : 100.0;
+        
+        cout << "\x1b[H";
         
         Utility::setColor(COLOR_PURPLE);
         cout << "================================================\n";
@@ -772,17 +1273,16 @@ private:
         cout << "================================================\n\n";
         Utility::setColor(COLOR_RESET);
         
-        // Display words (8-10 words at a time)
         int wordsToShow = 8;
         int start = currentIndex;
         int end = min(start + wordsToShow, (int)words.size());
         
+        cout << "\x1b[2K";
+        
         for (int i = start; i < end; i++) {
             if (i == currentIndex) {
-                // Current word with highlighting
                 string target = words[i];
                 
-                // Show typed part
                 int correct = 0;
                 int len = min(input.length(), target.length());
                 for (int j = 0; j < len; j++) {
@@ -808,26 +1308,26 @@ private:
                         cout << target.substr(correct);
                     }
                 }
+                Utility::setColor(COLOR_RESET);
             } else {
                 Utility::setColor(COLOR_CYAN);
                 cout << words[i];
+                Utility::setColor(COLOR_RESET);
             }
             
             if (i < end - 1) cout << " ";
         }
         
-        // Clear the "Your typing:" line and rewrite it
-        cout << "\n\nYour typing: ";
+        cout << "\n\n\x1b[2KYour typing: ";
         Utility::setColor(COLOR_YELLOW);
         
-        // Display only the current word being typed, not previous words
         cout << input;
         
-        // Display underscores for remaining characters in current word
         if (currentIndex < words.size()) {
             string target = words[currentIndex];
             int remaining = target.length() - input.length();
             if (remaining > 0) {
+                Utility::setColor(COLOR_WHITE);
                 for (int i = 0; i < remaining; i++) {
                     cout << "_";
                 }
@@ -837,38 +1337,19 @@ private:
         cout << "\n\n";
         Utility::setColor(COLOR_RESET);
         
-        // Calculate stats
-        double accuracy = (totalChars > 0) ? (correctChars * 100.0 / totalChars) : 100.0;
-        double timeElapsed = 60 - timeLeft;
-        double minutesElapsed = timeElapsed / 60.0;
-        double wpm = (minutesElapsed > 0) ? (currentIndex / minutesElapsed) : 0;
-        
-        cout << "Words: " << currentIndex;
+        cout << "\x1b[2KWords: " << currentIndex;
         cout << " | WPM: " << fixed << setprecision(1) << wpm;
         cout << " | Accuracy: " << fixed << setprecision(1) << accuracy << "%";
         cout << "\n" << string(50, '-') << "\n";
         cout << "Press SPACE for next word | ESC to quit";
         
-        // Clear any remaining lines
-        CONSOLE_SCREEN_BUFFER_INFO csbi;
-        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-        COORD cursorPos = {0, 10};
-        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPos);
-        
-        // Clear lines below if needed
-        DWORD written;
-        FillConsoleOutputCharacter(GetStdHandle(STD_OUTPUT_HANDLE), ' ', 
-                                   csbi.dwSize.X * 10, cursorPos, &written);
-        
-        // Move cursor back to typing position
-        cursorPos = {14, 6}; // Position after "Your typing: "
-        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cursorPos);
-        
-        return true;
+        int cursorX = 14 + input.length();
+        cout << "\x1b[6;" << cursorX << "H";
+        fflush(stdout);
     }
     
     void showResults(const TypingResult& result, User* user) {
-        Utility::clearScreen();
+        Utility::clearScreenNoFlicker();
         Utility::setColor(COLOR_PURPLE);
         cout << "================================================\n";
         cout << "               TEST RESULTS                    \n";
@@ -881,7 +1362,6 @@ private:
         cout << "WPM:          " << result.wpm << "\n";
         cout << "Accuracy:     " << result.accuracy << "%\n";
         
-        // Calculate points
         int points = 0;
         if (result.wpm >= 60 && result.accuracy >= 95) {
             points = 50;
@@ -931,21 +1411,6 @@ private:
             file << "Optics studies light behavior including reflection refraction and diffraction. ";
             file << "Nuclear physics examines atomic nuclei their structure and radioactive decay. ";
             file << "Astrophysics applies physics principles to astronomical objects and phenomena. ";
-            file << "Kinematics analyzes motion without considering forces or masses of objects. ";
-            file << "Dynamics studies motion causes considering forces acting upon moving bodies. ";
-            file << "Mechanics branch deals with bodies motion under action of various forces. ";
-            file << "Acoustics science explores sound properties including production transmission. ";
-            file << "Fluid mechanics examines liquids gases behavior in motion and rest states. ";
-            file << "Statistical mechanics connects microscopic properties to macroscopic observations. ";
-            file << "Solid state physics investigates rigid matter crystals and their properties. ";
-            file << "Plasma physics studies ionized gases and their collective behavior patterns. ";
-            file << "Condensed matter physics explores matter phases with strong particle interactions. ";
-            file << "Particle physics investigates elementary constituents of matter and forces. ";
-            file << "Gravitation describes attraction between objects with mass in universe. ";
-            file << "Momentum product of mass velocity remains constant without external forces. ";
-            file << "Torque rotational force causes angular acceleration in rotating systems. ";
-            file << "Work energy transfer occurs when force moves object through distance. ";
-            file << "Power rate work done measures energy transfer speed over time. ";
         }
         else if (subject == "Chemistry") {
             file << "Chemistry explores matter properties composition structure and chemical transformations. ";
@@ -958,21 +1423,6 @@ private:
             file << "Thermochemistry examines energy changes during chemical reactions and processes. ";
             file << "Electrochemistry involves chemical reactions producing electricity or vice versa. ";
             file << "Chemical kinetics studies reaction rates and factors influencing their speed. ";
-            file << "Stoichiometry calculates reactant product quantities in chemical reactions. ";
-            file << "Atomic structure includes protons neutrons electrons in specific arrangements. ";
-            file << "Molecular geometry describes three dimensional shapes of chemical molecules. ";
-            file << "Chemical equilibrium occurs when forward reverse reaction rates equalize. ";
-            file << "Solutions homogeneous mixtures contain solute dissolved in solvent medium. ";
-            file << "Colligative properties depend on solute concentration not its identity. ";
-            file << "Chemical thermodynamics studies energy transformations during chemical processes. ";
-            file << "Coordination chemistry examines complexes containing central metal atom. ";
-            file << "Analytical chemistry identifies measures chemical components in samples. ";
-            file << "Biochemistry studies chemical processes within living biological organisms. ";
-            file << "Polymer chemistry investigates large molecules composed repeating subunits. ";
-            file << "Nuclear chemistry examines changes occurring within atomic nuclei structures. ";
-            file << "Environmental chemistry studies chemical phenomena occurring in nature. ";
-            file << "Materials science explores properties applications of various substances. ";
-            file << "Spectroscopy analyzes interaction between matter and electromagnetic radiation. ";
         }
         else if (subject == "Mathematics") {
             file << "Mathematics uses logical reasoning to study quantities structures patterns changes. ";
@@ -985,21 +1435,6 @@ private:
             file << "Number theory studies integers and their properties relationships patterns. ";
             file << "Linear algebra investigates vectors matrices linear equations transformations. ";
             file << "Differential equations describe relationships involving functions and derivatives. ";
-            file << "Set theory foundation mathematics deals with collections of distinct objects. ";
-            file << "Combinatorics studies counting arrangement and combination possibilities. ";
-            file << "Topology explores properties preserved through continuous deformations stretching. ";
-            file << "Complex analysis examines functions of complex variables with applications. ";
-            file << "Numerical analysis develops algorithms for solving mathematical problems. ";
-            file << "Graph theory studies networks vertices edges and their connections. ";
-            file << "Mathematical logic explores reasoning validity proof and computability concepts. ";
-            file << "Optimization finds best solutions from available feasible alternative options. ";
-            file << "Cryptography secures communication through encryption decryption techniques. ";
-            file << "Game theory analyzes strategic interactions between rational decision makers. ";
-            file << "Fractal geometry studies infinitely complex patterns repeating at different scales. ";
-            file << "Mathematical modeling represents real world systems using mathematical concepts. ";
-            file << "Abstract algebra studies algebraic structures groups rings and fields. ";
-            file << "Real analysis rigorously examines real numbers sequences series functions. ";
-            file << "Functional analysis studies vector spaces endowed with limit related structures. ";
         }
         else if (subject == "Biology") {
             file << "Biology studies living organisms including their structure function growth origin. ";
@@ -1012,21 +1447,6 @@ private:
             file << "Taxonomy classifies organisms into hierarchical groups based on shared characteristics. ";
             file << "Ecology investigates interactions among organisms and their physical surroundings. ";
             file << "Biochemistry studies chemical processes within and relating to living organisms. ";
-            file << "Microbiology examines microscopic organisms including bacteria viruses fungi. ";
-            file << "Botany scientific study of plants including their physiology structure genetics. ";
-            file << "Zoology branch biology dealing with animal kingdom structure and behavior. ";
-            file << "Anatomy studies structure organisms and their parts tissues organs systems. ";
-            file << "Embryology examines development embryos from fertilization until birth. ";
-            file << "Immunology explores immune system responses to pathogens and foreign substances. ";
-            file << "Neuroscience studies nervous system structure development function disorders. ";
-            file << "Marine biology examines organisms ecosystems in oceans and saltwater environments. ";
-            file << "Molecular biology investigates molecular basis biological activity within cells. ";
-            file << "Cell biology examines structure function physiological properties of cells. ";
-            file << "Developmental biology studies process growth and development of organisms. ";
-            file << "Evolutionary biology explores evolutionary processes producing diversity life. ";
-            file << "Population biology examines dynamics species populations and interactions. ";
-            file << "Conservation biology studies biodiversity protection endangered species habitats. ";
-            file << "Biotechnology uses living systems organisms develop make useful products. ";
         }
         else if (subject == "English") {
             file << "English language proficiency involves grammar vocabulary reading writing skills. ";
@@ -1039,22 +1459,6 @@ private:
             file << "Syntax studies arrangement of words phrases to create well formed sentences. ";
             file << "Phonetics examines physical sounds of human speech including their production. ";
             file << "Semantics explores meaning in language including word sense and sentence logic. ";
-            file << "Phonology studies sound patterns within particular languages and systems. ";
-            file << "Morphology analyzes word structure formation and meaningful components. ";
-            file << "Pragmatics examines how context contributes to language meaning understanding. ";
-            file << "Discourse analysis studies written spoken language use beyond sentence level. ";
-            file << "Stylistics explores linguistic style variation in different contexts uses. ";
-            file << "Rhetoric studies principles rules governing effective persuasive communication. ";
-            file << "Poetry literary form uses aesthetic rhythmic qualities language evoke meaning. ";
-            file << "Prose written spoken language follows natural flow speech grammatical structure. ";
-            file << "Fiction narrative literature describes imaginary events and people characters. ";
-            file << "Nonfiction prose writing based on facts real events and actual people. ";
-            file << "Drama literature intended performance by actors on stage theater. ";
-            file << "Essay short piece writing on particular subject expressing author views. ";
-            file << "Biography detailed description person's life written by someone else. ";
-            file << "Autobiography account person's life written by that individual themselves. ";
-            file << "Journalism collection editing presentation news information newspapers media. ";
-            file << "Translation process rendering text from one language into another accurately. ";
         }
         else { // General
             file << "The quick brown fox jumps over the lazy dog repeatedly during practice sessions. ";
@@ -1067,21 +1471,6 @@ private:
             file << "Practice sessions should include varied texts to adapt to different word patterns. ";
             file << "Monitoring words per minute helps track progress and identify improvement areas. ";
             file << "Consistent practice yields better results than occasional intensive typing sessions. ";
-            file << "Typing proficiency enhances job opportunities and academic performance significantly. ";
-            file << "Different keyboard layouts exist including QWERTY DVORAK and Colemak arrangements. ";
-            file << "Finger placement home row keys provide reference points for efficient typing. ";
-            file << "Typing tests measure speed accuracy helping set realistic improvement goals. ";
-            file << "Online resources offer free typing lessons games for skill development. ";
-            file << "Professional typists often exceed hundred words per minute with high accuracy. ";
-            file << "Typing competitions showcase incredible speeds reaching two hundred words. ";
-            file << "Learning typing young creates lasting skills benefiting entire lifetime career. ";
-            file << "Mobile devices require different typing techniques than traditional keyboards. ";
-            file << "Voice recognition software complements but does not replace typing skills. ";
-            file << "Programming typing involves special characters symbols requiring practice. ";
-            file << "Data entry jobs demand both high speed and perfect accuracy standards. ";
-            file << "Transcription work requires excellent listening and fast typing abilities. ";
-            file << "Closed captioning realtime typing needs exceptional speed and concentration. ";
-            file << "Court reporters use specialized machines for verbatim transcription. ";
         }
         
         file.close();
@@ -1097,6 +1486,7 @@ private:
     }
 };
 
+// QuizManager class (unchanged from original)
 class QuizManager {
 private:
     struct QuizQuestion {
@@ -1173,7 +1563,7 @@ private:
         Utility::pauseScreen("Press Enter to start...");
         
         for (int i = 0; i < totalQuestions; i++) {
-            Utility::clearScreen();
+            Utility::clearScreenNoFlicker();
             cout << "Question " << (i + 1) << " of " << totalQuestions << "\n";
             cout << "Score: " << score << "/" << (i * 5) << "\n\n";
             
@@ -1211,8 +1601,7 @@ private:
             }
         }
         
-        // Show final results
-        Utility::clearScreen();
+        Utility::clearScreenNoFlicker();
         Utility::setColor(COLOR_PURPLE);
         cout << "================================================\n";
         cout << "               QUIZ RESULTS                     \n";
@@ -1246,7 +1635,6 @@ private:
     }
     
     void initializeQuizzes() {
-        // Physics Quiz
         vector<QuizQuestion> physicsQuiz = {
             {"What is the SI unit of force?", {"Newton", "Joule", "Watt", "Pascal"}, 1},
             {"Which law states that every action has an equal and opposite reaction?", 
@@ -1267,7 +1655,6 @@ private:
         };
         subjectQuizzes["Physics"] = physicsQuiz;
         
-        // Chemistry Quiz
         vector<QuizQuestion> chemistryQuiz = {
             {"What is the atomic number of oxygen?", {"6", "7", "8", "9"}, 3},
             {"Which gas is most abundant in Earth's atmosphere?", 
@@ -1284,7 +1671,6 @@ private:
         };
         subjectQuizzes["Chemistry"] = chemistryQuiz;
         
-        // English Quiz
         vector<QuizQuestion> englishQuiz = {
             {"Which word is a noun?", {"Run", "Beautiful", "Quickly", "House"}, 4},
             {"What is the past tense of 'go'?", {"Goed", "Went", "Gone", "Going"}, 2},
@@ -1303,7 +1689,6 @@ private:
         };
         subjectQuizzes["English"] = englishQuiz;
         
-        // Mathematics Quiz
         vector<QuizQuestion> mathQuiz = {
             {"What is 15 × 6?", {"80", "90", "100", "110"}, 2},
             {"What is the value of π to two decimal places?", {"3.12", "3.14", "3.16", "3.18"}, 2},
@@ -1320,7 +1705,6 @@ private:
         };
         subjectQuizzes["Mathematics"] = mathQuiz;
         
-        // Biology Quiz
         vector<QuizQuestion> biologyQuiz = {
             {"What is the powerhouse of the cell?", 
              {"Nucleus", "Mitochondria", "Ribosome", "Cell Membrane"}, 2},
@@ -1406,7 +1790,6 @@ private:
             Utility::printInfo("Please make sure main.html is in the same directory.");
             Utility::printInfo("Creating a simple HTML file instead...");
             
-            // Create a basic HTML file if main.html doesn't exist
             ofstream file(htmlFile);
             file << "<!DOCTYPE html>\n";
             file << "<html>\n";
@@ -1529,6 +1912,7 @@ private:
     NotesManager notesManager;
     TypingTestManager typingManager;
     QuizManager quizManager;
+    MiniGamesManager miniGamesManager;
     LearningResources resources;
     AdminPanel adminPanel;
     User* currentUser;
@@ -1537,6 +1921,7 @@ public:
     EdutainmentApp() : adminPanel(&userManager, &notesManager, &typingManager), currentUser(nullptr) {
         Utility::init();
         setupAdmin();
+        srand(static_cast<unsigned int>(time(nullptr)));
     }
     
     void run() {
@@ -1560,14 +1945,15 @@ private:
             cout << "\n1. Study Notes\n";
             cout << "2. Typing Challenge\n";
             cout << "3. Subject Quizzes\n";
-            cout << "4. Learning Resources\n";
+            cout << "4. Mini-Games Collection\n";  // New option
+            cout << "5. Learning Resources\n";
             if (currentUser->getRole() == "admin") {
-                cout << "5. Admin Panel\n";
+                cout << "6. Admin Panel\n";
+                cout << "7. Logout\n";
+                cout << "8. Exit\n";
+            } else {
                 cout << "6. Logout\n";
                 cout << "7. Exit\n";
-            } else {
-                cout << "5. Logout\n";
-                cout << "6. Exit\n";
             }
         } else {
             cout << "1. Login\n";
@@ -1595,22 +1981,23 @@ private:
                     case 1: notesManager.viewNotes(); break;
                     case 2: typingManager.showTypingMenu(currentUser); break;
                     case 3: quizManager.showQuizMenu(currentUser); break;
-                    case 4: resources.showResources(); break;
-                    case 5: 
+                    case 4: miniGamesManager.showMiniGamesMenu(currentUser); break;  // New
+                    case 5: resources.showResources(); break;
+                    case 6: 
                         if (currentUser->getRole() == "admin") {
                             adminPanel.showMenu(currentUser);
                         } else {
                             logout();
                         }
                         break;
-                    case 6: 
+                    case 7: 
                         if (currentUser->getRole() == "admin") {
                             logout();
                         } else {
                             exit(0);
                         }
                         break;
-                    case 7: 
+                    case 8: 
                         if (currentUser->getRole() == "admin") {
                             exit(0);
                         }
